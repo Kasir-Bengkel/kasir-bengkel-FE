@@ -1,4 +1,4 @@
-import Sidebar from "@/component/admin/Sidebar";
+import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
 import { useRouter } from "next/router";
 import {
   Heading,
@@ -18,7 +18,7 @@ export default function CatatanPengeluaran() {
   const router = useRouter();
 
   return (
-    <Sidebar>
+    <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
       <Heading>Catatan Pengeluaran</Heading>
       <SimpleGrid mt={"16px"} columns={3} spacing={16}>
         <Card
@@ -64,6 +64,6 @@ export default function CatatanPengeluaran() {
           </VStack>
         </Card>
       </SimpleGrid>
-    </Sidebar>
+    </SidebarContainer>
   );
 }

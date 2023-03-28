@@ -1,4 +1,4 @@
-import Sidebar from "@/component/admin/Sidebar";
+import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
 import {
   Heading,
   Card,
@@ -16,7 +16,7 @@ import {
 
 export default function PengeluaranLainnya() {
   return (
-    <Sidebar>
+    <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
       <Heading>Part/Jasa</Heading>
 
       <Card mt={"12px"} px={4} py={8}>
@@ -57,6 +57,6 @@ export default function PengeluaranLainnya() {
           </Table>
         </TableContainer>
       </Card>
-    </Sidebar>
+    </SidebarContainer>
   );
 }

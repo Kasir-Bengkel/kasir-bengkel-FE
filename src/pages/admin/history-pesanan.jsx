@@ -1,31 +1,22 @@
-import Sidebar from "@/component/admin/Sidebar";
+import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
 import {
   Heading,
   HStack,
-  SimpleGrid,
   Input,
   Select,
   VStack,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
   Text,
-  Button,
   Flex,
   Box,
   Center,
   Badge,
-  Tbody,
-  Td,
-  Table,
 } from "@chakra-ui/react";
 
 import { FcDocument } from "react-icons/fc";
 
 export default function HistoryPesanan() {
   return (
-    <Sidebar>
+    <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
       <Box px={8}>
         <Heading>Pesanan Masuk</Heading>
         <HStack mt={"12px"}>
@@ -119,6 +110,6 @@ export default function HistoryPesanan() {
           </Box>
         </VStack>
       </Box>
-    </Sidebar>
+    </SidebarContainer>
   );
 }

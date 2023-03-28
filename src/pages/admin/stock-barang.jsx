@@ -1,4 +1,4 @@
-import Sidebar from "@/component/admin/Sidebar";
+import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
 import {
   Box,
   Heading,
@@ -21,7 +21,7 @@ import {
 
 export default function StockBarang() {
   return (
-    <Sidebar>
+    <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
       <Box>
         <Heading>Stock Barang</Heading>
         <Card p={4} mt={"12px"}>
@@ -83,6 +83,6 @@ export default function StockBarang() {
           </Flex>
         </Card>
       </Box>
-    </Sidebar>
+    </SidebarContainer>
   );
 }

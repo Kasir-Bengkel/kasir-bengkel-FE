@@ -1,8 +1,7 @@
-import Sidebar from "@/component/admin/Sidebar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useWindowSize } from "react-use";
 import {
   Heading,
-  SimpleGrid,
   Card,
   Input,
   FormControl,
@@ -15,53 +14,72 @@ import {
   Button,
   Center,
   Icon,
+  Text,
+  VStack,
+  Flex,
 } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 import FormStock from "@/component/admin/pesanan/FormStock";
+import FormPartJasa from "@/component/admin/pesanan/FormPartJasa";
+import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
 
 export default function Pesanan() {
-  const [fields, setFields] = useState([
-    { nama: "", stock: "", qty: "", hModal: "", hJual: "" },
-  ]);
+  const [fieldsStock, setFieldsStock] = useState([]);
+  const [fieldsPartJasa, setFieldsPartJasa] = useState([]);
+  const [sidebarWidth, setSidebarWidth] = useState(350);
+  const [windowsWidth, setWindowsWidth] = useState();
+  const { width } = useWindowSize();
 
-  const addField = () => {
-    setFields([
-      ...fields,
-      { nama: "", stock: "", qty: "", hModal: "", hJual: "" },
+  const addFieldStock = () => {
+    setFieldsStock([...fieldsStock, { stock: "", qty: "" }]);
+  };
+
+  const addFieldPartJasa = () => {
+    setFieldsPartJasa([
+      ...fieldsPartJasa,
+      { nama: "", hModal: "", hJual: "", qty: "" },
     ]);
   };
 
-  const changeHandlerSumber = (i, value) => {
-    const newFormFields = [...fields];
-    if (value === "stock") {
-      newFormFields[i]["hModal"] = "";
-      newFormFields[i]["hJual"] = "";
-    } else if (value === "lainnya") {
-      newFormFields[i]["stock"] = "";
-      newFormFields[i]["qty"] = "";
-    }
-    setFields(newFormFields);
+  const removeHandlerFormStock = (index) => {
+    const newFieldsStock = [...fieldsStock];
+    newFieldsStock.splice(index, 1);
+    setFieldsStock(newFieldsStock);
   };
 
-  const removeHandlerForm = (index) => {
-    const newFields = [...fields];
-    newFields.splice(index, 1);
-    setFields(newFields);
+  const removeHandlerFormPartJasa = (index) => {
+    const newFieldsPartJasa = [...fieldsPartJasa];
+    newFieldsPartJasa.splice(index, 1);
+    setFieldsPartJasa(newFieldsPartJasa);
   };
 
   const submitHandler = () => {
-    console.log(fields);
+    console.log(fieldsStock);
+    console.log(fieldsPartJasa);
   };
 
-  const changeHandlerForm = (i, name, value) => {
-    const newFormFields = [...fields];
-    newFormFields[i][name] = value;
-    setFields(newFormFields);
+  const changeHandlerFormStock = (i, name, value) => {
+    const newFormFieldsStock = [...fieldsStock];
+    newFormFieldsStock[i][name] = value;
+    setFieldsStock(newFormFieldsStock);
   };
+
+  const changeHandlerFormPartJasa = (i, name, value) => {
+    const newFormFieldsPartJasa = [...fieldsPartJasa];
+    newFormFieldsPartJasa[i][name] = value;
+    setFieldsPartJasa(newFormFieldsPartJasa);
+  };
+
+  const sidebarWidthHandler = (value) => {
+    setSidebarWidth(value);
+  };
+
+  useEffect(() => {
+    setWindowsWidth(width);
+  }, []);
 
   return (
-    <Sidebar>
-      <Heading>Buat Pesanan</Heading>
+    <SidebarContainer onSidebarWidth={sidebarWidthHandler}>
       <Card mt={2} p={4}>
         <FormControl>
           <FormLabel>Nama Mekanik</FormLabel>
@@ -111,46 +129,93 @@ export default function Pesanan() {
           </FormControl>
         </HStack>
       </Card>
-      <Card mt={2} p={4} overflowY={"scroll"} maxH={"40vh"}>
-        <Heading size={"sm"}>Pilih Stock/Part/Jasa</Heading>
-        {fields.map((field, index) => (
-          <FormStock
-            key={index}
-            nama={field.nama}
-            stock={field.stock}
-            qty={field.qty}
-            hModal={field.hModal}
-            hJual={field.hJual}
-            index={index}
-            onRemoveForm={removeHandlerForm}
-            onChangeForm={changeHandlerForm}
-            onChangeSumber={changeHandlerSumber}
-          />
-        ))}
-        <Center>
-          <Button
-            leftIcon={<Icon as={FaPlus} />}
-            colorScheme="teal"
-            mt={2}
-            size={"md"}
-            onClick={() => addField()}
-          >
-            Add Field
-          </Button>
-        </Center>
-      </Card>
-      <Box
-        w={"100%"}
-        h={"80px"}
-        bg={"white"}
-        position={"fixed"}
-        bottom={0}
-        left={237}
-        borderTop={"1px"}
-        borderColor={"gray.200"}
-      >
-        <button onClick={submitHandler}>Submit</button>
-      </Box>
-    </Sidebar>
+      <HStack mt={2}>
+        <Card p={4} overflowY={"scroll"} w={"30%"}>
+          <Heading size={"sm"}>Pilih Stock</Heading>
+          {fieldsStock.map((field, index) => (
+            <FormStock
+              key={index}
+              stock={field.stock}
+              qty={field.qty}
+              index={index}
+              onRemoveForm={removeHandlerFormStock}
+              onChangeForm={changeHandlerFormStock}
+            />
+          ))}
+          <Center>
+            <Button
+              leftIcon={<Icon as={FaPlus} />}
+              colorScheme="teal"
+              mt={2}
+              size={"md"}
+              onClick={addFieldStock}
+            >
+              Add Field
+            </Button>
+          </Center>
+        </Card>
+        <Card p={4} overflowY={"scroll"} w={"100%"}>
+          <Heading size={"sm"}>Pilih Part/Jasa</Heading>
+          {fieldsPartJasa.map((field, index) => (
+            <FormPartJasa
+              key={index}
+              nama={field.nama}
+              hModal={field.hModal}
+              hJual={field.hJual}
+              qty={field.qty}
+              index={index}
+              onRemoveForm={removeHandlerFormPartJasa}
+              onChangeForm={changeHandlerFormPartJasa}
+            />
+          ))}
+
+          <Center>
+            <Button
+              leftIcon={<Icon as={FaPlus} />}
+              colorScheme="teal"
+              mt={2}
+              size={"md"}
+              onClick={addFieldPartJasa}
+            >
+              Add Field
+            </Button>
+          </Center>
+        </Card>
+      </HStack>
+      {windowsWidth !== undefined && (
+        <Box
+          w={windowsWidth - sidebarWidth}
+          h={"80px"}
+          bg={"white"}
+          position={"fixed"}
+          bottom={0}
+          right={0}
+          borderTop={"1px"}
+          borderColor={"gray.200"}
+          py={2}
+          px={8}
+        >
+          <Flex justifyContent={"space-between"}>
+            <VStack alignItems={"flex-start"}>
+              <Heading size={"sm"}>Total Pembayaran: </Heading>
+              <Text>Rp. 150.000</Text>
+            </VStack>
+            <HStack>
+              <Select borderColor={"gray.300"} placeholder={"tipe pembayaran"}>
+                <option value={"cash"}>Cash</option>
+                <option value={"debit"}>Debit</option>
+              </Select>
+              <InputGroup>
+                <InputLeftAddon children="Rp" />
+                <Input type={"number"} placeholder="diskon" />
+              </InputGroup>
+              <Button px={8} colorScheme={"blue"} onClick={submitHandler}>
+                Submit
+              </Button>
+            </HStack>
+          </Flex>
+        </Box>
+      )}
+    </SidebarContainer>
   );
 }
