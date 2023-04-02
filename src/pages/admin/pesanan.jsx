@@ -26,7 +26,7 @@ import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
 export default function Pesanan() {
   const [fieldsStock, setFieldsStock] = useState([]);
   const [fieldsPartJasa, setFieldsPartJasa] = useState([]);
-  const [sidebarWidth, setSidebarWidth] = useState(350);
+  const [sidebarWidth, setSidebarWidth] = useState(100);
   const [windowsWidth, setWindowsWidth] = useState();
   const { width } = useWindowSize();
 
@@ -130,7 +130,7 @@ export default function Pesanan() {
         </HStack>
       </Card>
       <HStack mt={2}>
-        <Card p={4} overflowY={"scroll"} w={"30%"}>
+        <Card p={4} overflowY={"scroll"} w={"30%"} minH={"50vh"} maxH={"50vh"}>
           <Heading size={"sm"}>Pilih Stock</Heading>
           {fieldsStock.map((field, index) => (
             <FormStock
@@ -154,7 +154,7 @@ export default function Pesanan() {
             </Button>
           </Center>
         </Card>
-        <Card p={4} overflowY={"scroll"} w={"100%"}>
+        <Card p={4} overflowY={"scroll"} w={"100%"} minH={"50vh"} maxH={"50vh"}>
           <Heading size={"sm"}>Pilih Part/Jasa</Heading>
           {fieldsPartJasa.map((field, index) => (
             <FormPartJasa
@@ -204,6 +204,8 @@ export default function Pesanan() {
               <Select borderColor={"gray.300"} placeholder={"tipe pembayaran"}>
                 <option value={"cash"}>Cash</option>
                 <option value={"debit"}>Debit</option>
+                <option value={"transfer"}>Transfer</option>
+                <option value={"cashtrasnfer"}>Cash + Transfer</option>
               </Select>
               <InputGroup>
                 <InputLeftAddon children="Rp" />

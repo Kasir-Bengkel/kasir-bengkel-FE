@@ -16,10 +16,13 @@
     "eslint": "8.35.0",
     "eslint-config-next": "13.2.3",
     "framer-motion": "^10.2.4",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "next": "13.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
+    "react-pdf": "^6.2.2",
     "react-use": "^17.4.0"
   }
 }

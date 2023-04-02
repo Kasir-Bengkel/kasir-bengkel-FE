@@ -14,23 +14,34 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-export default function PengeluaranLainnya() {
+import { useState } from "react";
+import { DUMMY_PARTJASA } from "@/constant/DummyData";
+import TablePartJasa from "@/component/admin/part-jasa/TablePartJasa";
+
+export default function PartJasa() {
+  const [partJasa, setPartJasa] = useState(DUMMY_PARTJASA);
+  const [searchName, setSearchName] = useState("");
+
+  const filteredItems = partJasa.filter((item) =>
+    item.nama.toLowerCase().includes(searchName.toLowerCase())
+  );
+
   return (
     <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
       <Heading>Part/Jasa</Heading>
 
       <Card mt={"12px"} px={4} py={8}>
         <HStack spacing={6}>
-          <Input type={"date"} />
-          <Input placeholder="Nominal" />
-          <Input placeholder="Catatan" />
+          <Input
+            placeholder="Nama Part/Jasa"
+            onChange={(e) => setSearchName(e.target.value)}
+          />
         </HStack>
 
         <TableContainer mt={"12px"}>
           <Table variant="striped" colorScheme={"blackAlpha"}>
             <Thead>
               <Tr>
-                <Th w={"15%"}>Tanggal</Th>
                 <Th w={"13%"}>No. Invoice</Th>
                 <Th w={"30%"}>Nama Part/Jasa</Th>
                 <Th>Modal</Th>
@@ -39,20 +50,16 @@ export default function PengeluaranLainnya() {
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td>11 Januari 2022</Td>
-                <Td>00010323</Td>
-                <Td>Shock Belakang</Td>
-                <Td>
-                  <Text color={"red"}>Rp. 15.000</Text>
-                </Td>
-                <Td>
-                  <Text color={"green"}>Rp. 30.000</Text>
-                </Td>
-                <Td>
-                  <Text color={"green"}>Rp. 5.000</Text>
-                </Td>
-              </Tr>
+              {filteredItems.map((item) => (
+                <TablePartJasa
+                  key={item.id}
+                  id={item.id}
+                  invoice={item.invoice}
+                  jual={item.jual}
+                  modal={item.modal}
+                  nama={item.nama}
+                />
+              ))}
             </Tbody>
           </Table>
         </TableContainer>

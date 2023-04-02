@@ -15,6 +15,7 @@ export default function Footer() {
     <Box
       bg={useColorModeValue("gray.50", "gray.900")}
       color={useColorModeValue("gray.700", "gray.200")}
+      id="contact"
     >
       <Container
         as={Stack}
@@ -31,24 +32,6 @@ export default function Footer() {
         </Stack>
         <Text>Kritik, Saran Dan Pertanyaan : admin@kasirbengkel.com</Text>
       </Container>
-
-      <Box
-        borderTopWidth={1}
-        borderStyle={"solid"}
-        borderColor={useColorModeValue("gray.200", "gray.700")}
-      >
-        <Container
-          as={Stack}
-          maxW={"6xl"}
-          py={4}
-          direction={{ base: "column", md: "row" }}
-          spacing={4}
-          justify={"center"}
-          align={"center"}
-        >
-          <Text>© 2022 Chakra Templates. All rights reserved</Text>
-        </Container>
-      </Box>
     </Box>
   );
 }

@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Container,
   Flex,
   Heading,
@@ -12,19 +11,7 @@ import {
   StackDivider,
   Image,
 } from "@chakra-ui/react";
-import { ReactElement } from "react";
-import {
-  FcAbout,
-  FcAssistant,
-  FcCollaboration,
-  FcDonate,
-  FcManager,
-} from "react-icons/fc";
-import {
-  IoAnalyticsSharp,
-  IoLogoBitcoin,
-  IoSearchSharp,
-} from "react-icons/io5";
+import { FcDonate, FcFinePrint, FcPrint } from "react-icons/fc";
 
 const Card = ({ heading, description, icon, href }) => {
   return (
@@ -59,36 +46,18 @@ const Card = ({ heading, description, icon, href }) => {
   );
 };
 
-const Feature = ({ text, icon, iconBg }) => {
-  return (
-    <Stack direction={"row"} align={"center"}>
-      <Flex
-        w={8}
-        h={8}
-        align={"center"}
-        justify={"center"}
-        rounded={"full"}
-        bg={iconBg}
-      >
-        {icon}
-      </Flex>
-      <Text fontWeight={600}>{text}</Text>
-    </Stack>
-  );
-};
-
 export default function About() {
   return (
     <>
-      <Box p={4}>
+      <Box p={4} id="about">
         <Stack spacing={4} as={Container} maxW={"3xl"} textAlign={"center"}>
           <Heading fontSize={{ base: "2xl", sm: "4xl" }} fontWeight={"bold"}>
             Fitur Kasir Bengkel
           </Heading>
           <Text color={"gray.600"} fontSize={{ base: "sm", sm: "lg" }}>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis
-            obcaecati ut cupiditate pariatur, dignissimos, placeat amet
-            officiis.
+            Selamat datang di website perusahaan kami! Kami ingin memperkenalkan
+            beberapa fitur yang tersedia di website kami yang dapat mempermudah
+            aktivitas bisnis Anda.
           </Text>
         </Stack>
 
@@ -96,17 +65,17 @@ export default function About() {
           <Flex flexWrap="wrap" gridGap={6} justify="center">
             <Card
               heading={"Print Invoice"}
-              icon={<Icon as={FcAssistant} w={10} h={10} />}
+              icon={<Icon as={FcPrint} w={10} h={10} />}
               description={
-                "Lorem ipsum dolor sit amet catetur, adipisicing elit."
+                "Anda tidak perlu lagi menghabiskan waktu berjam-jam untuk membuat invoice secara manual"
               }
               href={"#"}
             />
             <Card
               heading={"Tracking Pesanan"}
-              icon={<Icon as={FcCollaboration} w={10} h={10} />}
+              icon={<Icon as={FcFinePrint} w={10} h={10} />}
               description={
-                "Lorem ipsum dolor sit amet catetur, adipisicing elit."
+                "Anda dapat melacak pesanan anda dengan mudah dan cepat."
               }
               href={"#"}
             />
@@ -114,7 +83,7 @@ export default function About() {
               heading={"Fitur Lainnya"}
               icon={<Icon as={FcDonate} w={10} h={10} />}
               description={
-                "Lorem ipsum dolor sit amet catetur, adipisicing elit."
+                "Kami juga menyediakan fitur lain yang dapat membantu Anda dalam menjalankan bisnis Anda."
               }
               href={"#"}
             />
@@ -126,8 +95,8 @@ export default function About() {
           <Stack spacing={4}>
             <Heading>Jasa Bengkel</Heading>
             <Text color={"gray.500"} fontSize={"lg"}>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore
+              Kami juga menyediakan fitur lain yang dapat membantu Anda dalam
+              menjalankan bisnis Anda.
             </Text>
             <Stack
               spacing={4}
@@ -137,32 +106,9 @@ export default function About() {
                 />
               }
             >
-              <Feature
-                icon={
-                  <Icon
-                    as={IoAnalyticsSharp}
-                    color={"yellow.500"}
-                    w={5}
-                    h={5}
-                  />
-                }
-                iconBg={useColorModeValue("yellow.100", "yellow.900")}
-                text={"Gurah Mesin"}
-              />
-              <Feature
-                icon={
-                  <Icon as={IoLogoBitcoin} color={"green.500"} w={5} h={5} />
-                }
-                iconBg={useColorModeValue("green.100", "green.900")}
-                text={"Tune Up"}
-              />
-              <Feature
-                icon={
-                  <Icon as={IoSearchSharp} color={"purple.500"} w={5} h={5} />
-                }
-                iconBg={useColorModeValue("purple.100", "purple.900")}
-                text={"Service Kaki Kaki"}
-              />
+              <Text fontWeight={600}>Gurah Mesin</Text>
+              <Text fontWeight={600}>Tune Up</Text>
+              <Text fontWeight={600}>Service Kaki Kaki</Text>
             </Stack>
           </Stack>
           <Flex>

@@ -10,7 +10,7 @@ import {
 
 export default function Hero() {
   return (
-    <Stack minH={"600px"} direction={{ base: "column", md: "row" }}>
+    <Stack minH={"600px"} direction={{ base: "column", md: "row" }} id="home">
       <Flex p={8} flex={1} align={"center"} justify={"center"}>
         <Stack spacing={6} w={"full"} maxW={"lg"}>
           <Heading fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}>
@@ -32,20 +32,28 @@ export default function Hero() {
             </Text>
           </Heading>
           <Text fontSize={{ base: "md", lg: "lg" }} color={"gray.500"}>
-            Lorem ipsum dolor sit atmet
+            Servis Mobil Murah | Ganti Oli, Tune Up, Gurah Mesin, Dan Lainnya
           </Text>
           <Stack direction={{ base: "column", md: "row" }} spacing={4}>
             <Button
-              rounded={"full"}
+              rounded={"md"}
               bg={"blue.400"}
               color={"white"}
               _hover={{
                 bg: "blue.500",
               }}
+              w={180}
             >
               Sign Up
             </Button>
-            <Button rounded={"full"}>Sign In</Button>
+            <Button
+              rounded={"md"}
+              variant="outline"
+              colorScheme={"blue"}
+              w={180}
+            >
+              Sign In
+            </Button>
           </Stack>
         </Stack>
       </Flex>

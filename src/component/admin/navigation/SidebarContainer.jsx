@@ -3,7 +3,7 @@ import { useState } from "react";
 import Sidebar from "./Sidebar";
 
 export default function SidebarContainer({ children, onSidebarWidth }) {
-  const [collapse, setCollapse] = useState(true);
+  const [collapse, setCollapse] = useState(false);
 
   const collapseHandler = () => {
     setCollapse(!collapse);
@@ -29,7 +29,7 @@ export default function SidebarContainer({ children, onSidebarWidth }) {
         <Sidebar collapse={collapse} onCollapse={collapseHandler} />
       </Flex>
       <Box
-        h={"100vh"}
+        h={"full  "}
         w={"100%"}
         bg={useColorModeValue("gray.100", "gray.900")}
         p={4}

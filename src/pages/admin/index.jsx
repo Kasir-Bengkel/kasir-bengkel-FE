@@ -1,5 +1,6 @@
 import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import {
   Heading,
   Card,
@@ -13,14 +14,40 @@ import {
   Input,
 } from "@chakra-ui/react";
 
+import { monthNames } from "@/constant/MonthName";
+
 import { FcFeedIn, FcInTransit, FcRules } from "react-icons/fc";
 
 export default function AdminTest() {
   const router = useRouter();
 
+  const [dateInput, setDateInput] = useState({ day: "", month: "", year: "" });
+
   const sidebarWidthHandler = (value) => {
     console.log(value);
   };
+
+  const changeDateFormat = (date) => {
+    const updatedValue = {
+      day: date.getDate(),
+      month: monthNames[date.getMonth()],
+      year: date.getFullYear(),
+    };
+    setDateInput((oldValue) => ({
+      ...oldValue,
+      ...updatedValue,
+    }));
+  };
+
+  const dateInputHandler = (e) => {
+    const date = new Date(e.target.value);
+    changeDateFormat(date);
+  };
+
+  useEffect(() => {
+    const today = new Date();
+    changeDateFormat(today);
+  }, []);
 
   return (
     <SidebarContainer onSidebarWidth={sidebarWidthHandler}>
@@ -29,10 +56,15 @@ export default function AdminTest() {
           <CardHeader>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
               <Heading>Tanggal</Heading>
-              <Input size={"md"} w={"25%"} type={"date"} />
+              <Input
+                size={"md"}
+                w={"25%"}
+                type={"date"}
+                onChange={dateInputHandler}
+              />
             </Flex>
             <Text mt={"8px"} fontSize={"2xl"}>
-              17 Maret 2023
+              {dateInput.day} {dateInput.month} {dateInput.year}
             </Text>
           </CardHeader>
           <CardBody>
