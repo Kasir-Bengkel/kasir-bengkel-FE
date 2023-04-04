@@ -55,6 +55,27 @@ export default function StockBarang() {
     });
   };
 
+  const updateHandler = (updatedData) => {
+    const updatedStock = stock.map((item) => {
+      if (item.id === updatedData.id) {
+        return {
+          ...item,
+          qty: updatedData.qty,
+          nama_stock: updatedData.namaStock,
+          harga_jual: updatedData.hargaJual,
+          harga_modal: updatedData.hargaModal,
+        };
+      }
+      return item;
+    });
+    setStock(updatedStock);
+  };
+
+  const deleteHandler = (id) => {
+    const deletedStock = stock.filter((item) => item.id !== id);
+    setStock(deletedStock);
+  };
+
   return (
     <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
       <Box>
@@ -105,7 +126,9 @@ export default function StockBarang() {
                     placeholder="jumlah stock"
                     onChange={changeInputHandler}
                   />
-                  <Button onClick={simpanHandler}>Simpan</Button>
+                  <Button onClick={simpanHandler} colorScheme="green">
+                    Simpan
+                  </Button>
                 </SimpleGrid>
               </TabPanel>
             </TabPanels>
@@ -128,6 +151,8 @@ export default function StockBarang() {
               namaStock={item.nama_stock}
               hargaModal={item.harga_modal}
               hargaJual={item.harga_jual}
+              onUpdateHandler={updateHandler}
+              onDeleteHandler={deleteHandler}
             />
           ))}
         </VStack>

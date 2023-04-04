@@ -1,7 +1,7 @@
 const DUMMY_PESANAN = [
   {
     invoice: "00010323",
-    waktu_order: "19 March 2023 12:43",
+    waktu_order: "2023-03-19 12:43",
     nama_kendaraan: "Honda Civic",
     plat_nomor: "B6313VKC",
     nama_pemilik: "Yura Yunani",
@@ -12,7 +12,7 @@ const DUMMY_PESANAN = [
   },
   {
     invoice: "00020323",
-    waktu_order: "20 March 2023 12:43",
+    waktu_order: "2023-03-20 12:43",
     nama_kendaraan: "Hyundai Ionic",
     nama_pemilik: "Jerome",
     plat_nomor: "B21JAY",
@@ -69,13 +69,13 @@ const DUMMY_PENGELUARAN_HARIAN = [
     id: "SPH01",
     nominal: 150000,
     catatan: "tang sepi",
-    date: "1 April 2023",
+    date: "2023-04-01",
   },
   {
     id: "SPH02",
     nominal: 12000,
     catatan: "galon 2 GALAXY",
-    date: "2 April 2023",
+    date: "2023-04-02",
   },
 ];
 
@@ -84,13 +84,13 @@ const DUMMY_PENGELUARAN_LAINNYA = [
     id: "SPL01",
     nominal: 258000,
     catatan: "Bayar Warung",
-    date: "1 April 2023",
+    date: "2023-04-01",
   },
   {
     id: "SPL02",
     nominal: 675000,
     catatan: "Klaim bensin, parkir",
-    date: "2 April 2023",
+    date: "2023-04-02",
   },
 ];
 

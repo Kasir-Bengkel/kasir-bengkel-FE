@@ -10,8 +10,6 @@ import {
   Tr,
   Th,
   Tbody,
-  Td,
-  ButtonGroup,
   Button,
   Flex,
   Text,
@@ -46,14 +44,6 @@ export default function PengeluaranLainnya() {
     setNewPengeluaranLainnya((prev) => ({ ...prev, [name]: value }));
   };
 
-  const dateSearchHandler = (e) => {
-    if (e.target.value !== "") {
-      setSearchDate(formatDate(e.target.value));
-    } else {
-      setSearchDate("");
-    }
-  };
-
   const filteredItems = pengeluaranLainnya.filter(
     (pengeluaran) =>
       pengeluaran.catatan.toLowerCase().includes(searchCatatan.toLowerCase()) &&
@@ -66,7 +56,7 @@ export default function PengeluaranLainnya() {
       id: Math.random(),
       nominal: parseInt(newPengeluaranLainnya.nominal),
       catatan: newPengeluaranLainnya.catatan,
-      date: formatDate(newPengeluaranLainnya.date),
+      date: newPengeluaranLainnya.date,
     };
     setPengeluaranLainnya((prev) => [...prev, newItem]);
     setNewPengeluaranLainnya({
@@ -75,6 +65,29 @@ export default function PengeluaranLainnya() {
       catatan: "",
       date: "",
     });
+  };
+
+  const updateHandler = (updatedData) => {
+    const updatedPengeluaran = pengeluaranLainnya.map((pengeluaran) => {
+      if (pengeluaran.id === updatedData.id) {
+        return {
+          ...pengeluaran,
+          date: updatedData.date,
+          nominal: updatedData.nominal,
+          catatan: updatedData.catatan,
+        };
+      }
+      return pengeluaran;
+    });
+
+    setPengeluaranLainnya(updatedPengeluaran);
+  };
+
+  const deleteHandler = (id) => {
+    const deletedPengeluaranLainnya = pengeluaranLainnya.filter(
+      (item) => item.id !== id
+    );
+    setPengeluaranLainnya(deletedPengeluaranLainnya);
   };
 
   return (
@@ -90,7 +103,10 @@ export default function PengeluaranLainnya() {
           <TabPanels>
             <TabPanel>
               <HStack spacing={6}>
-                <Input type={"date"} onChange={dateSearchHandler} />
+                <Input
+                  type={"date"}
+                  onChange={(e) => setSearchDate(e.target.value)}
+                />
                 <Input
                   onChange={(e) => setSearchNominal(e.target.value)}
                   placeholder="Nominal"
@@ -159,6 +175,8 @@ export default function PengeluaranLainnya() {
                   nominal={item.nominal}
                   catatan={item.catatan}
                   date={item.date}
+                  onUpdateHandler={updateHandler}
+                  onDeleteHandler={deleteHandler}
                 />
               ))}
             </Tbody>

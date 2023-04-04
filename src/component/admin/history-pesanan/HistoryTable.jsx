@@ -10,6 +10,7 @@ import {
 
 import { FcDocument } from "react-icons/fc";
 import { useRouter } from "next/router";
+import { formatDateTime } from "@/helper/FormatDateTime";
 
 export default function HistoryTable({
   invoice,
@@ -107,7 +108,7 @@ export default function HistoryTable({
       <Box>
         <Flex px={4} py={2} justifyContent={"space-between"}>
           <Text>Waktu Order</Text>
-          <Text>{waktuOrder}</Text>
+          <Text>{formatDateTime(waktuOrder)}</Text>
         </Flex>
       </Box>
     </Box>

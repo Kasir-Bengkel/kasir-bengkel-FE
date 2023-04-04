@@ -3,21 +3,12 @@ import { Heading, HStack, Input, Select, VStack, Box } from "@chakra-ui/react";
 import HistoryTable from "@/component/admin/history-pesanan/HistoryTable";
 import { useState } from "react";
 import { DUMMY_PESANAN } from "@/constant/DummyData";
-import { formatDate } from "@/helper/FormatDate";
 
 export default function HistoryPesanan() {
   const [searchInvoice, setSearchInvoice] = useState("");
   const [searchPlat, setSearchPlat] = useState("");
   const [searchDate, setSearchDate] = useState("");
   const [searchStatus, setSearchStatus] = useState("");
-
-  const dateSearchHandler = (e) => {
-    if (e.target.value !== "") {
-      setSearchDate(formatDate(e.target.value));
-    } else {
-      setSearchDate("");
-    }
-  };
 
   const filteredItems = DUMMY_PESANAN.filter(
     (pesanan) =>
@@ -46,7 +37,7 @@ export default function HistoryPesanan() {
             bg={"white"}
             placeholder="Tanggal"
             type="date"
-            onChange={dateSearchHandler}
+            onChange={(e) => setSearchDate(e.target.value)}
           />
           <Select
             bg={"white"}

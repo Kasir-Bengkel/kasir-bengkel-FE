@@ -45,14 +45,6 @@ export default function PengeluaranHarian() {
     setNewPengeluaranHarian((prev) => ({ ...prev, [name]: value }));
   };
 
-  const dateSearchHandler = (e) => {
-    if (e.target.value !== "") {
-      setSearchDate(formatDate(e.target.value));
-    } else {
-      setSearchDate("");
-    }
-  };
-
   const filteredItems = pengeluaranHarian.filter(
     (pengeluaran) =>
       pengeluaran.catatan.toLowerCase().includes(searchCatatan.toLowerCase()) &&
@@ -65,7 +57,7 @@ export default function PengeluaranHarian() {
       id: Math.random(),
       nominal: parseInt(newPengeluaranHarian.nominal),
       catatan: newPengeluaranHarian.catatan,
-      date: formatDate(newPengeluaranHarian.date),
+      date: newPengeluaranHarian.date,
     };
     setPengeluaranHarian((prev) => [...prev, newItem]);
     setNewPengeluaranHarian({
@@ -74,6 +66,29 @@ export default function PengeluaranHarian() {
       catatan: "",
       date: "",
     });
+  };
+
+  const updateHandler = (updatedData) => {
+    const updatedPengeluaran = pengeluaranHarian.map((pengeluaran) => {
+      if (pengeluaran.id === updatedData.id) {
+        return {
+          ...pengeluaran,
+          date: updatedData.date,
+          nominal: updatedData.nominal,
+          catatan: updatedData.catatan,
+        };
+      }
+      return pengeluaran;
+    });
+
+    setPengeluaranHarian(updatedPengeluaran);
+  };
+
+  const deleteHandler = (id) => {
+    const deletedPengeluaranHarian = pengeluaranHarian.filter(
+      (item) => item.id !== id
+    );
+    setPengeluaranHarian(deletedPengeluaranHarian);
   };
 
   return (
@@ -89,7 +104,10 @@ export default function PengeluaranHarian() {
           <TabPanels>
             <TabPanel>
               <HStack spacing={6}>
-                <Input type={"date"} onChange={dateSearchHandler} />
+                <Input
+                  type={"date"}
+                  onChange={(e) => setSearchDate(e.target.value)}
+                />
                 <Input
                   onChange={(e) => setSearchNominal(e.target.value)}
                   placeholder="Nominal"
@@ -166,6 +184,8 @@ export default function PengeluaranHarian() {
                     nominal={item.nominal}
                     catatan={item.catatan}
                     date={item.date}
+                    onUpdateHandler={updateHandler}
+                    onDeleteHandler={deleteHandler}
                   />
                 ))}
               </Tbody>
