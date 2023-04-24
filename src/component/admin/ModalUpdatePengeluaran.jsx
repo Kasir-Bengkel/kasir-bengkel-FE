@@ -40,6 +40,12 @@ export default function ModalUpdatePengeluaran({
     onCloseHandler();
   };
 
+  const formattedDateUpdate = (date) => {
+    const dateObj = new Date(date);
+    const formattedDate = dateObj.toISOString().slice(0, 10);
+    return formattedDate;
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -52,7 +58,7 @@ export default function ModalUpdatePengeluaran({
             <Input
               type="date"
               name="date"
-              value={updatedData.date}
+              value={formattedDateUpdate(updatedData.date)}
               onChange={changeInputHandler}
             />
           </FormControl>

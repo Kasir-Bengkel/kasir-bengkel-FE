@@ -1,6 +1,10 @@
 import { Box, Flex, HStack, useColorModeValue } from "@chakra-ui/react";
 import { useState } from "react";
 import Sidebar from "./Sidebar";
+import { FirebaseApp } from "@/config";
+import { getAuth } from "firebase/auth";
+
+const auth = getAuth(FirebaseApp);
 
 export default function SidebarContainer({ children, onSidebarWidth }) {
   const [collapse, setCollapse] = useState(false);
@@ -8,6 +12,11 @@ export default function SidebarContainer({ children, onSidebarWidth }) {
   const collapseHandler = () => {
     setCollapse(!collapse);
     onSidebarWidth(collapse ? 100 : 350);
+  };
+
+  const logoutClickHandler = () => {
+    console.log("Kepencet disini");
+    auth.signOut();
   };
 
   return (
@@ -26,7 +35,11 @@ export default function SidebarContainer({ children, onSidebarWidth }) {
         borderRight={"1px"}
         borderColor={"gray.200"}
       >
-        <Sidebar collapse={collapse} onCollapse={collapseHandler} />
+        <Sidebar
+          collapse={collapse}
+          onCollapse={collapseHandler}
+          onLogoutHandler={logoutClickHandler}
+        />
       </Flex>
       <Box
         h={"full  "}

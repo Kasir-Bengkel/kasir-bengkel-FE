@@ -1,11 +1,18 @@
-import SignupCard from "@/component/Signup";
 import Head from "next/head";
 import Navbar from "@/component/Navbar";
 import Hero from "@/component/Hero";
 import Footer from "@/component/Footer";
 import About from "@/component/About";
+import { useRouter } from "next/router";
+import { useAuthContext } from "@/context/AuthContext";
+import { useEffect } from "react";
 
 export default function Home() {
+  const router = useRouter();
+  const { user } = useAuthContext();
+  useEffect(() => {
+    if (user !== null) router.push("/admin");
+  }, [user]);
   return (
     <>
       <Head>
@@ -15,7 +22,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <Hero />
+      <Hero
+        onSignInHandler={() => {
+          router.push("/login");
+        }}
+      />
       <About />
       <Footer />
     </>

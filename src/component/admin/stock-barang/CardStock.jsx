@@ -23,6 +23,7 @@ export default function CardStock({
   hargaJual,
   onUpdateHandler,
   onDeleteHandler,
+  date,
 }) {
   const {
     isOpen: isUpdateOpen,
@@ -89,6 +90,7 @@ export default function CardStock({
         onClose={onUpdateClose}
         id={id}
         qty={qty}
+        date={date}
         namaStock={namaStock}
         hargaModal={hargaModal}
         hargaJual={hargaJual}

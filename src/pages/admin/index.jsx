@@ -17,9 +17,15 @@ import {
 import { monthNames } from "@/constant/MonthName";
 
 import { FcFeedIn, FcInTransit, FcRules } from "react-icons/fc";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function AdminTest() {
+  const { user } = useAuthContext();
   const router = useRouter();
+
+  useEffect(() => {
+    if (user == null) router.push("/login");
+  }, [user]);
 
   const [dateInput, setDateInput] = useState({ day: "", month: "", year: "" });
 

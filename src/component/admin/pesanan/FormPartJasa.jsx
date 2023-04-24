@@ -13,10 +13,11 @@ import { FaMinusCircle } from "react-icons/fa";
 import { useState } from "react";
 
 export default function FormPartJasa({
-  nama,
-  qty,
-  hModal,
-  hJual,
+  ItemName,
+  EquityPrice,
+  SellingPrice,
+  Quantity,
+  Date,
   onRemoveForm,
   onChangeForm,
   index,
@@ -39,9 +40,9 @@ export default function FormPartJasa({
       <FormControl>
         <FormLabel>Nama Part/Jasa</FormLabel>
         <Input
-          name="nama"
+          name="ItemName"
           type={"text"}
-          value={nama}
+          value={ItemName}
           onChange={changeHandlerForm}
         />
       </FormControl>
@@ -49,14 +50,24 @@ export default function FormPartJasa({
         <FormLabel>Harga Modal</FormLabel>
         <InputGroup>
           <InputLeftAddon children="Rp" />
-          <Input name="hModal" value={hModal} onChange={changeHandlerForm} />
+          <Input
+            name="EquityPrice"
+            value={EquityPrice}
+            type={"number"}
+            onChange={changeHandlerForm}
+          />
         </InputGroup>
       </FormControl>
       <FormControl>
         <FormLabel>Harga Jual</FormLabel>
         <InputGroup>
           <InputLeftAddon children="Rp" />
-          <Input name="hJual" value={hJual} onChange={changeHandlerForm} />
+          <Input
+            name="SellingPrice"
+            value={SellingPrice}
+            type={"number"}
+            onChange={changeHandlerForm}
+          />
         </InputGroup>
       </FormControl>
 
@@ -70,10 +81,10 @@ export default function FormPartJasa({
 
         <HStack>
           <Input
-            name="qty"
+            name="Quantity"
             borderColor={"gray.300"}
             type={"number"}
-            value={qty}
+            value={Quantity}
             onChange={changeHandlerForm}
             disabled={qtyState ? false : true}
           />

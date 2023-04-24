@@ -8,7 +8,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 
-export default function Hero() {
+export default function Hero({ onSignInHandler }) {
   return (
     <Stack minH={"600px"} direction={{ base: "column", md: "row" }} id="home">
       <Flex p={8} flex={1} align={"center"} justify={"center"}>
@@ -37,20 +37,9 @@ export default function Hero() {
           <Stack direction={{ base: "column", md: "row" }} spacing={4}>
             <Button
               rounded={"md"}
-              bg={"blue.400"}
-              color={"white"}
-              _hover={{
-                bg: "blue.500",
-              }}
-              w={180}
-            >
-              Sign Up
-            </Button>
-            <Button
-              rounded={"md"}
-              variant="outline"
               colorScheme={"blue"}
               w={180}
+              onClick={onSignInHandler}
             >
               Sign In
             </Button>

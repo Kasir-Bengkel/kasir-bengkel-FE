@@ -79,24 +79,10 @@ export default function Navbar() {
             as={"a"}
             fontSize={"sm"}
             fontWeight={400}
-            variant={"link"}
+            colorScheme={"blue"}
             href={"#"}
           >
             Sign In
-          </Button>
-          <Button
-            as={"a"}
-            display={{ base: "none", md: "inline-flex" }}
-            fontSize={"sm"}
-            fontWeight={600}
-            color={"white"}
-            bg={"blue.400"}
-            href={"#"}
-            _hover={{
-              bg: "blue.300",
-            }}
-          >
-            Sign Up
           </Button>
         </Stack>
       </Flex>

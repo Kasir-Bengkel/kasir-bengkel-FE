@@ -5,12 +5,17 @@ import {
   Input,
   Select,
   Icon,
+  VisuallyHidden,
 } from "@chakra-ui/react";
 import { FaMinusCircle } from "react-icons/fa";
+import { useState } from "react";
 
 export default function FormStock({
-  stock,
-  qty,
+  ItemName,
+  Quantity,
+  EquityPrice,
+  SellingPrice,
+  Date,
   onChangeForm,
   index,
   onRemoveForm,
@@ -28,24 +33,24 @@ export default function FormStock({
       <FormControl>
         <FormLabel>Pilih Stock</FormLabel>
         <Select
-          name="stock"
+          name="ItemName"
           borderColor={"gray.300"}
           w={150}
-          value={stock}
+          value={ItemName}
           onChange={changeHandlerForm}
           placeholder={"pilih stock"}
         >
-          <option value={"spakbor"}>spakbor | qty: 1</option>
-          <option value={"spion"}>spion | qty: 2</option>
+          <option value={"Spooring"}>Spooring| qty: 10</option>
+          <option value={"Karet Setabil"}>Karet Setabil | qty: 12</option>
         </Select>
       </FormControl>
       <FormControl>
         <FormLabel>Quantity</FormLabel>
         <HStack>
           <Input
-            name="qty"
+            name="Quantity"
             onChange={changeHandlerForm}
-            value={qty}
+            value={Quantity}
             borderColor={"gray.300"}
             type={"number"}
           />
@@ -58,6 +63,7 @@ export default function FormStock({
           />
         </HStack>
       </FormControl>
+      <VisuallyHidden></VisuallyHidden>
     </HStack>
   );
 }

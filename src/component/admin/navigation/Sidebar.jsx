@@ -4,7 +4,7 @@ import { AvatarBox } from "./AvatarBox";
 import { Logo } from "./Logo";
 import { Nav } from "./nav/Nav";
 
-export default function Sidebar({ collapse, onCollapse }) {
+export default function Sidebar({ collapse, onCollapse, onLogoutHandler }) {
   const collapseHandler = () => {
     onCollapse();
   };
@@ -22,7 +22,7 @@ export default function Sidebar({ collapse, onCollapse }) {
         </HStack>
         <Nav collapse={collapse} />
       </Box>
-      <AvatarBox collapse={collapse} />
+      <AvatarBox collapse={collapse} onLogout={onLogoutHandler} />
     </>
   );
 }

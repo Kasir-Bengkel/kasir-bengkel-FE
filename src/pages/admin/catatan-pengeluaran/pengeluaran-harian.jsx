@@ -22,15 +22,13 @@ import {
 } from "@chakra-ui/react";
 
 import TablePengeluaranHarian from "@/component/admin/pengeluaran-harian/TablePengeluaranHarian";
-import { useState } from "react";
-import { DUMMY_PENGELUARAN_HARIAN } from "@/constant/DummyData";
-import { formatDate } from "@/helper/FormatDate";
+import { useState, useEffect } from "react";
+import expensesQuery from "@/pages/api/expenses-query";
 
 export default function PengeluaranHarian() {
-  const [pengeluaranHarian, setPengeluaranHarian] = useState(
-    DUMMY_PENGELUARAN_HARIAN
-  );
+  const [pengeluaranHarian, setPengeluaranHarian] = useState();
   const [searchDate, setSearchDate] = useState("");
+  const [filteredItems, setFilteredItems] = useState();
   const [searchNominal, setSearchNominal] = useState("");
   const [searchCatatan, setSearchCatatan] = useState("");
   const [newPengeluaranHarian, setNewPengeluaranHarian] = useState({
@@ -40,55 +38,109 @@ export default function PengeluaranHarian() {
     date: "",
   });
 
+  useEffect(() => {
+    async function getExpensesHandler() {
+      const expensesData = await expensesQuery({
+        method: "GET",
+        params: {
+          type: "daily",
+        },
+      });
+      if (expensesData.data !== undefined) {
+        const { items } = expensesData.data;
+        setPengeluaranHarian(items);
+      }
+    }
+    getExpensesHandler();
+  }, []);
+
+  useEffect(() => {
+    if (pengeluaranHarian !== undefined) {
+      const newFilteredItems = pengeluaranHarian.filter(
+        (pengeluaran) =>
+          pengeluaran.notes
+            .toLowerCase()
+            .includes(searchCatatan.toLowerCase()) &&
+          pengeluaran.date.toLowerCase().includes(searchDate.toLowerCase()) &&
+          pengeluaran.nominal.toString().includes(searchNominal.toLowerCase())
+      );
+      setFilteredItems(newFilteredItems);
+    }
+  }, [pengeluaranHarian, searchCatatan, searchDate, searchNominal]);
+
   const changeInputHandler = (e) => {
     const { name, value } = e.target;
     setNewPengeluaranHarian((prev) => ({ ...prev, [name]: value }));
   };
 
-  const filteredItems = pengeluaranHarian.filter(
-    (pengeluaran) =>
-      pengeluaran.catatan.toLowerCase().includes(searchCatatan.toLowerCase()) &&
-      pengeluaran.date.toLowerCase().includes(searchDate.toLowerCase()) &&
-      pengeluaran.nominal.toString().includes(searchNominal.toLowerCase())
-  );
-
-  const submitHandler = () => {
-    const newItem = {
-      id: Math.random(),
-      nominal: parseInt(newPengeluaranHarian.nominal),
-      catatan: newPengeluaranHarian.catatan,
-      date: newPengeluaranHarian.date,
-    };
-    setPengeluaranHarian((prev) => [...prev, newItem]);
-    setNewPengeluaranHarian({
-      id: "",
-      nominal: "",
-      catatan: "",
-      date: "",
-    });
-  };
-
-  const updateHandler = (updatedData) => {
-    const updatedPengeluaran = pengeluaranHarian.map((pengeluaran) => {
-      if (pengeluaran.id === updatedData.id) {
-        return {
-          ...pengeluaran,
-          date: updatedData.date,
-          nominal: updatedData.nominal,
-          catatan: updatedData.catatan,
-        };
-      }
-      return pengeluaran;
+  const submitHandler = async () => {
+    const newExpensesData = await expensesQuery({
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: {
+        Nominal: parseInt(newPengeluaranHarian.nominal),
+        Notes: newPengeluaranHarian.catatan,
+        Date: newPengeluaranHarian.date,
+        Types: 1,
+      },
     });
 
-    setPengeluaranHarian(updatedPengeluaran);
+    if (newExpensesData.status === 200) {
+      setNewPengeluaranHarian({
+        id: "",
+        qty: "",
+        nama_stock: "",
+        harga_modal: "",
+        harga_jual: "",
+      });
+
+      window.location.reload();
+    } else {
+      console.log("data gagal masuk " + newExpensesData);
+      return;
+    }
   };
 
-  const deleteHandler = (id) => {
-    const deletedPengeluaranHarian = pengeluaranHarian.filter(
-      (item) => item.id !== id
-    );
-    setPengeluaranHarian(deletedPengeluaranHarian);
+  const updateHandler = async (updatedData) => {
+    const updateExpensesData = await expensesQuery({
+      method: "PUT",
+      params: {
+        id: updatedData.id,
+      },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: {
+        Id: updatedData.id,
+        Date: updatedData.date,
+        Nominal: updatedData.nominal,
+        Notes: updatedData.catatan,
+        Types: 1,
+      },
+    });
+    if (updateExpensesData.status === 204) {
+      window.location.reload();
+    } else {
+      console.log("data gagal update " + updateExpensesData.messages);
+      return;
+    }
+  };
+
+  const deleteHandler = async (id) => {
+    const deleteExpensesData = await expensesQuery({
+      method: "DELETE",
+      params: {
+        id,
+      },
+    });
+    if (deleteExpensesData.status === 204) {
+      window.location.reload();
+    } else {
+      console.log("data gagal terhapus " + deleteExpensesData);
+      return;
+    }
   };
 
   return (
@@ -161,37 +213,39 @@ export default function PengeluaranHarian() {
         maxH={"60vh"}
         pb={4}
       >
-        <Card mt={"12px"} px={4} py={8}>
-          <TableContainer mt={"12px"}>
-            <Table variant="striped" colorScheme={"blackAlpha"}>
-              <Thead>
-                <Tr>
-                  <Th>Tanggal</Th>
-                  <Th>Nominal</Th>
-                  <Th>Catatan</Th>
-                  <Th>
-                    <Flex justifyContent={"center"}>
-                      <Text>Action</Text>
-                    </Flex>
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {filteredItems.map((item) => (
-                  <TablePengeluaranHarian
-                    key={item.id}
-                    id={item.id}
-                    nominal={item.nominal}
-                    catatan={item.catatan}
-                    date={item.date}
-                    onUpdateHandler={updateHandler}
-                    onDeleteHandler={deleteHandler}
-                  />
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </Card>
+        {filteredItems !== undefined && (
+          <Card mt={"12px"} px={4} py={8}>
+            <TableContainer mt={"12px"}>
+              <Table variant="striped" colorScheme={"blackAlpha"}>
+                <Thead>
+                  <Tr>
+                    <Th>Tanggal</Th>
+                    <Th>Nominal</Th>
+                    <Th>Catatan</Th>
+                    <Th>
+                      <Flex justifyContent={"center"}>
+                        <Text>Action</Text>
+                      </Flex>
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {filteredItems.map((item) => (
+                    <TablePengeluaranHarian
+                      key={item.id}
+                      id={item.id}
+                      nominal={item.nominal}
+                      catatan={item.notes}
+                      date={item.date}
+                      onUpdateHandler={updateHandler}
+                      onDeleteHandler={deleteHandler}
+                    />
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Card>
+        )}
       </VStack>
     </SidebarContainer>
   );

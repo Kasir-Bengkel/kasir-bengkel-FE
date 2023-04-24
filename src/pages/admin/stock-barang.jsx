@@ -14,12 +14,13 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import CardStock from "@/component/admin/stock-barang/CardStock";
-import { useState } from "react";
-import { DUMMY_STOCK } from "@/constant/DummyData";
+import stocksQuery from "../api/stocks-query";
+import { useState, useEffect } from "react";
 
 export default function StockBarang() {
   const [searchStockName, setSearchStockName] = useState("");
-  const [stock, setStock] = useState(DUMMY_STOCK);
+  const [stock, setStock] = useState();
+  const [filteredItems, setFilteredItems] = useState();
   const [newStockItem, setNewStockItem] = useState({
     id: "",
     qty: "",
@@ -28,52 +29,101 @@ export default function StockBarang() {
     harga_jual: "",
   });
 
+  useEffect(() => {
+    async function getStocksHandler() {
+      const stocksData = await stocksQuery({
+        method: "GET",
+      });
+      if (stocksData.data !== undefined) {
+        const { items } = stocksData.data;
+        setStock(items);
+      }
+    }
+    getStocksHandler();
+  }, []);
+
+  useEffect(() => {
+    if (stock !== undefined) {
+      const newFilteredItems = stock.filter((stocks) =>
+        stocks.stockName.toLowerCase().includes(searchStockName.toLowerCase())
+      );
+      setFilteredItems(newFilteredItems);
+    }
+  }, [stock, searchStockName]);
+
   const changeInputHandler = (event) => {
     const { name, value } = event.target;
     setNewStockItem((prev) => ({ ...prev, [name]: value }));
   };
 
-  const filteredItems = stock.filter((stocks) =>
-    stocks.nama_stock.toLowerCase().includes(searchStockName.toLowerCase())
-  );
-
-  const simpanHandler = () => {
-    const newItem = {
-      id: Math.random(),
-      qty: parseInt(newStockItem.qty),
-      nama_stock: newStockItem.nama_stock,
-      harga_modal: parseInt(newStockItem.harga_modal),
-      harga_jual: parseInt(newStockItem.harga_jual),
-    };
-    setStock((prev) => [...prev, newItem]);
-    setNewStockItem({
-      id: "",
-      qty: "",
-      nama_stock: "",
-      harga_modal: "",
-      harga_jual: "",
+  const simpanHandler = async () => {
+    const today = new Date();
+    const newStocksData = await stocksQuery({
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: {
+        ItemName: newStockItem.nama_stock,
+        EquityPrice: parseInt(newStockItem.harga_modal),
+        SellingPrice: parseInt(newStockItem.harga_jual),
+        Quantity: parseInt(newStockItem.qty),
+        Date: today,
+      },
     });
+
+    if (newStocksData.status === 200) {
+      setNewStockItem({
+        id: "",
+        qty: "",
+        nama_stock: "",
+        harga_modal: "",
+        harga_jual: "",
+      });
+
+      window.location.reload();
+    } else {
+      console.log("data gagal masuk " + newStocksData);
+      return;
+    }
   };
 
-  const updateHandler = (updatedData) => {
-    const updatedStock = stock.map((item) => {
-      if (item.id === updatedData.id) {
-        return {
-          ...item,
-          qty: updatedData.qty,
-          nama_stock: updatedData.namaStock,
-          harga_jual: updatedData.hargaJual,
-          harga_modal: updatedData.hargaModal,
-        };
-      }
-      return item;
+  const updateHandler = async (updatedData) => {
+    const updateStocksData = await stocksQuery({
+      method: "PUT",
+      params: updatedData.id,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: {
+        Id: updatedData.id,
+        Quantity: updatedData.qty,
+        ItemName: updatedData.namaStock,
+        SellingPrice: updatedData.hargaJual,
+        EquityPrice: updatedData.hargaModal,
+        Date: updatedData.date,
+      },
     });
-    setStock(updatedStock);
+
+    if (updateStocksData.status === 204) {
+      window.location.reload();
+    } else {
+      console.log("data gagal update " + updateStocksData);
+      return;
+    }
   };
 
-  const deleteHandler = (id) => {
-    const deletedStock = stock.filter((item) => item.id !== id);
-    setStock(deletedStock);
+  const deleteHandler = async (id) => {
+    const deleteStocksData = await stocksQuery({
+      method: "DELETE",
+      params: id,
+    });
+    if (deleteStocksData.status === 204) {
+      window.location.reload();
+    } else {
+      console.log("data gagal terhapus " + deleteStocksData);
+      return;
+    }
   };
 
   return (
@@ -135,27 +185,30 @@ export default function StockBarang() {
           </Tabs>
         </Card>
 
-        <VStack
-          mt={"12px"}
-          spacing={8}
-          overflowY={"scroll"}
-          alignItems={"unset"}
-          maxH={"68vh"}
-          pb={4}
-        >
-          {filteredItems.map((item) => (
-            <CardStock
-              key={item.id}
-              id={item.id}
-              qty={item.qty}
-              namaStock={item.nama_stock}
-              hargaModal={item.harga_modal}
-              hargaJual={item.harga_jual}
-              onUpdateHandler={updateHandler}
-              onDeleteHandler={deleteHandler}
-            />
-          ))}
-        </VStack>
+        {filteredItems !== undefined && (
+          <VStack
+            mt={"12px"}
+            spacing={8}
+            overflowY={"scroll"}
+            alignItems={"unset"}
+            maxH={"68vh"}
+            pb={4}
+          >
+            {filteredItems.map((item) => (
+              <CardStock
+                key={item.id}
+                id={item.id}
+                qty={item.quantity}
+                namaStock={item.stockName}
+                hargaModal={item.equityPrice}
+                hargaJual={item.sellingPrice}
+                date={item.date}
+                onUpdateHandler={updateHandler}
+                onDeleteHandler={deleteHandler}
+              />
+            ))}
+          </VStack>
+        )}
       </Box>
     </SidebarContainer>
   );

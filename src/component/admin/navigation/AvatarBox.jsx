@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { MdOutlineMoreHoriz, MdLogout, MdRecentActors } from "react-icons/md";
 
-export const AvatarBox = ({ collapse }) => {
+export const AvatarBox = ({ collapse, onLogout }) => {
   return (
     <Flex
       borderWidth={collapse ? 1 : 0}
@@ -49,7 +49,11 @@ export const AvatarBox = ({ collapse }) => {
         />
         <MenuList>
           <MenuItem icon={<MdRecentActors />}>Aktivitas Akun</MenuItem>
-          <MenuItem icon={<MdLogout color="red" />} color="red">
+          <MenuItem
+            icon={<MdLogout color="red" />}
+            color="red"
+            onClick={onLogout}
+          >
             Keluar
           </MenuItem>
         </MenuList>

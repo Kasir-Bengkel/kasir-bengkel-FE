@@ -18,17 +18,16 @@ import {
   TabPanels,
   TabPanel,
   Tab,
+  VStack,
 } from "@chakra-ui/react";
 
-import { useState } from "react";
-import { DUMMY_PENGELUARAN_LAINNYA } from "@/constant/DummyData";
-import { formatDate } from "@/helper/FormatDate";
+import { useState, useEffect } from "react";
 import TablePengeluaranLainnya from "@/component/admin/pengeluaran-lainnya/TablePengeluaranLainnya";
+import expensesQuery from "@/pages/api/expenses-query";
 
 export default function PengeluaranLainnya() {
-  const [pengeluaranLainnya, setPengeluaranLainnya] = useState(
-    DUMMY_PENGELUARAN_LAINNYA
-  );
+  const [pengeluaranLainnya, setPengeluaranLainnya] = useState();
+  const [filteredItems, setFilteredItems] = useState();
   const [searchDate, setSearchDate] = useState("");
   const [searchNominal, setSearchNominal] = useState("");
   const [searchCatatan, setSearchCatatan] = useState("");
@@ -39,55 +38,109 @@ export default function PengeluaranLainnya() {
     date: "",
   });
 
+  useEffect(() => {
+    async function getExpensesHandler() {
+      const expensesData = await expensesQuery({
+        method: "GET",
+        params: {
+          type: "other",
+        },
+      });
+      if (expensesData.data !== undefined) {
+        const { items } = expensesData.data;
+        setPengeluaranLainnya(items);
+      }
+    }
+    getExpensesHandler();
+  }, []);
+
+  useEffect(() => {
+    if (pengeluaranLainnya !== undefined) {
+      const newFilteredItems = pengeluaranLainnya.filter(
+        (pengeluaran) =>
+          pengeluaran.notes
+            .toLowerCase()
+            .includes(searchCatatan.toLowerCase()) &&
+          pengeluaran.date.toLowerCase().includes(searchDate.toLowerCase()) &&
+          pengeluaran.nominal.toString().includes(searchNominal.toLowerCase())
+      );
+      setFilteredItems(newFilteredItems);
+    }
+  }, [pengeluaranLainnya, searchCatatan, searchDate, searchNominal]);
+
   const changeInputHandler = (e) => {
     const { name, value } = e.target;
     setNewPengeluaranLainnya((prev) => ({ ...prev, [name]: value }));
   };
 
-  const filteredItems = pengeluaranLainnya.filter(
-    (pengeluaran) =>
-      pengeluaran.catatan.toLowerCase().includes(searchCatatan.toLowerCase()) &&
-      pengeluaran.date.toLowerCase().includes(searchDate.toLowerCase()) &&
-      pengeluaran.nominal.toString().includes(searchNominal.toLowerCase())
-  );
-
-  const submitHandler = () => {
-    const newItem = {
-      id: Math.random(),
-      nominal: parseInt(newPengeluaranLainnya.nominal),
-      catatan: newPengeluaranLainnya.catatan,
-      date: newPengeluaranLainnya.date,
-    };
-    setPengeluaranLainnya((prev) => [...prev, newItem]);
-    setNewPengeluaranLainnya({
-      id: "",
-      nominal: "",
-      catatan: "",
-      date: "",
-    });
-  };
-
-  const updateHandler = (updatedData) => {
-    const updatedPengeluaran = pengeluaranLainnya.map((pengeluaran) => {
-      if (pengeluaran.id === updatedData.id) {
-        return {
-          ...pengeluaran,
-          date: updatedData.date,
-          nominal: updatedData.nominal,
-          catatan: updatedData.catatan,
-        };
-      }
-      return pengeluaran;
+  const submitHandler = async () => {
+    const newExpensesData = await expensesQuery({
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: {
+        Nominal: parseInt(newPengeluaranLainnya.nominal),
+        Notes: newPengeluaranLainnya.catatan,
+        Date: newPengeluaranLainnya.date,
+        Types: 2,
+      },
     });
 
-    setPengeluaranLainnya(updatedPengeluaran);
+    if (newExpensesData.status === 200) {
+      setNewPengeluaranLainnya({
+        id: "",
+        qty: "",
+        nama_stock: "",
+        harga_modal: "",
+        harga_jual: "",
+      });
+
+      window.location.reload();
+    } else {
+      console.log("data gagal masuk " + newExpensesData);
+      return;
+    }
   };
 
-  const deleteHandler = (id) => {
-    const deletedPengeluaranLainnya = pengeluaranLainnya.filter(
-      (item) => item.id !== id
-    );
-    setPengeluaranLainnya(deletedPengeluaranLainnya);
+  const updateHandler = async (updatedData) => {
+    const updateExpensesData = await expensesQuery({
+      method: "PUT",
+      params: {
+        id: updatedData.id,
+      },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: {
+        Id: updatedData.id,
+        Date: updatedData.date,
+        Nominal: updatedData.nominal,
+        Notes: updatedData.catatan,
+        Types: 1,
+      },
+    });
+    if (updateExpensesData.status === 204) {
+      window.location.reload();
+    } else {
+      console.log("data gagal update " + updateExpensesData.messages);
+      return;
+    }
+  };
+
+  const deleteHandler = async (id) => {
+    const deleteExpensesData = await expensesQuery({
+      method: "DELETE",
+      params: {
+        id,
+      },
+    });
+    if (deleteExpensesData.status === 204) {
+      window.location.reload();
+    } else {
+      console.log("data gagal terhapus " + deleteExpensesData);
+      return;
+    }
   };
 
   return (
@@ -152,37 +205,48 @@ export default function PengeluaranLainnya() {
         </Tabs>
       </Card>
 
-      <Card mt={"12px"} px={4} py={8}>
-        <TableContainer mt={"12px"}>
-          <Table variant="striped" colorScheme={"blackAlpha"}>
-            <Thead>
-              <Tr>
-                <Th>Tanggal</Th>
-                <Th>Nominal</Th>
-                <Th>Catatan</Th>
-                <Th>
-                  <Flex justifyContent={"center"}>
-                    <Text>Action</Text>
-                  </Flex>
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {filteredItems.map((item) => (
-                <TablePengeluaranLainnya
-                  key={item.id}
-                  id={item.id}
-                  nominal={item.nominal}
-                  catatan={item.catatan}
-                  date={item.date}
-                  onUpdateHandler={updateHandler}
-                  onDeleteHandler={deleteHandler}
-                />
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      </Card>
+      <VStack
+        mt={"12px"}
+        spacing={8}
+        overflowY={"scroll"}
+        alignItems={"unset"}
+        maxH={"60vh"}
+        pb={4}
+      >
+        {filteredItems !== undefined && (
+          <Card mt={"12px"} px={4} py={8}>
+            <TableContainer mt={"12px"}>
+              <Table variant="striped" colorScheme={"blackAlpha"}>
+                <Thead>
+                  <Tr>
+                    <Th>Tanggal</Th>
+                    <Th>Nominal</Th>
+                    <Th>Catatan</Th>
+                    <Th>
+                      <Flex justifyContent={"center"}>
+                        <Text>Action</Text>
+                      </Flex>
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {filteredItems.map((item) => (
+                    <TablePengeluaranLainnya
+                      key={item.id}
+                      id={item.id}
+                      nominal={item.nominal}
+                      catatan={item.notes}
+                      date={item.date}
+                      onUpdateHandler={updateHandler}
+                      onDeleteHandler={deleteHandler}
+                    />
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Card>
+        )}
+      </VStack>
     </SidebarContainer>
   );
 }
