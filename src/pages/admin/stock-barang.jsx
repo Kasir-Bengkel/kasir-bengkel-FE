@@ -16,8 +16,17 @@ import {
 import CardStock from "@/component/admin/stock-barang/CardStock";
 import stocksQuery from "../api/stocks-query";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function StockBarang() {
+  const { user } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user == null) router.push("/login");
+  }, [user]);
+
   const [searchStockName, setSearchStockName] = useState("");
   const [stock, setStock] = useState();
   const [filteredItems, setFilteredItems] = useState();
@@ -69,6 +78,7 @@ export default function StockBarang() {
         SellingPrice: parseInt(newStockItem.harga_jual),
         Quantity: parseInt(newStockItem.qty),
         Date: today,
+        Types: 1,
       },
     });
 
@@ -81,7 +91,7 @@ export default function StockBarang() {
         harga_jual: "",
       });
 
-      window.location.reload();
+      // window.location.reload();
     } else {
       console.log("data gagal masuk " + newStocksData);
       return;
@@ -102,6 +112,7 @@ export default function StockBarang() {
         SellingPrice: updatedData.hargaJual,
         EquityPrice: updatedData.hargaModal,
         Date: updatedData.date,
+        Types: 1,
       },
     });
 

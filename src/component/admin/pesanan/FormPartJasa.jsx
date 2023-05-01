@@ -3,21 +3,21 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Select,
   Checkbox,
   Icon,
   InputGroup,
   InputLeftAddon,
 } from "@chakra-ui/react";
 import { FaMinusCircle } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function FormPartJasa({
-  ItemName,
-  EquityPrice,
-  SellingPrice,
-  Quantity,
-  Date,
+  itemName,
+  equityPrice,
+  sellingPrice,
+  quantity,
+  types,
+  date,
   onRemoveForm,
   onChangeForm,
   index,
@@ -31,8 +31,12 @@ export default function FormPartJasa({
 
   const [qtyState, setQtyState] = useState(true);
 
-  const qtyStateHandler = () => {
+  const qtyStateHandler = (e) => {
     setQtyState(!qtyState);
+    onChangeForm(index, "types", qtyState ? 3 : 2);
+    if (qtyState) {
+      onChangeForm(index, "quantity", 0);
+    }
   };
 
   return (
@@ -40,9 +44,9 @@ export default function FormPartJasa({
       <FormControl>
         <FormLabel>Nama Part/Jasa</FormLabel>
         <Input
-          name="ItemName"
+          name="itemName"
           type={"text"}
-          value={ItemName}
+          value={itemName}
           onChange={changeHandlerForm}
         />
       </FormControl>
@@ -51,8 +55,8 @@ export default function FormPartJasa({
         <InputGroup>
           <InputLeftAddon children="Rp" />
           <Input
-            name="EquityPrice"
-            value={EquityPrice}
+            name="equityPrice"
+            value={equityPrice}
             type={"number"}
             onChange={changeHandlerForm}
           />
@@ -63,8 +67,8 @@ export default function FormPartJasa({
         <InputGroup>
           <InputLeftAddon children="Rp" />
           <Input
-            name="SellingPrice"
-            value={SellingPrice}
+            name="sellingPrice"
+            value={sellingPrice}
             type={"number"}
             onChange={changeHandlerForm}
           />
@@ -74,18 +78,25 @@ export default function FormPartJasa({
       <FormControl>
         <HStack>
           <FormLabel>Quantity</FormLabel>
-          <Checkbox defaultChecked onChange={qtyStateHandler}>
+          <Checkbox
+            defaultChecked
+            name="types"
+            value={types}
+            onChange={qtyStateHandler}
+          >
             Berkuantitas?
           </Checkbox>
         </HStack>
 
         <HStack>
           <Input
-            name="Quantity"
+            name="quantity"
             borderColor={"gray.300"}
             type={"number"}
-            value={Quantity}
-            onChange={changeHandlerForm}
+            value={quantity}
+            onChange={(e) => {
+              onChangeForm(index, e.target.name, parseInt(e.target.value));
+            }}
             disabled={qtyState ? false : true}
           />
           <Icon

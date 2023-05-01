@@ -3,8 +3,18 @@ import { Heading, HStack, Input, Select, VStack, Box } from "@chakra-ui/react";
 import HistoryTable from "@/component/admin/history-pesanan/HistoryTable";
 import { useState } from "react";
 import { DUMMY_PESANAN } from "@/constant/DummyData";
+import { useRouter } from "next/router";
+import { useAuthContext } from "@/context/AuthContext";
+import { useEffect } from "react";
 
 export default function HistoryPesanan() {
+  const { user } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user == null) router.push("/login");
+  }, [user]);
+
   const [searchInvoice, setSearchInvoice] = useState("");
   const [searchPlat, setSearchPlat] = useState("");
   const [searchDate, setSearchDate] = useState("");

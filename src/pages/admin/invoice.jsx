@@ -1,21 +1,19 @@
 import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import {
-  Heading,
-  Card,
-  Image,
-  HStack,
-  VStack,
-  Text,
-  Center,
-  Flex,
-  CardBody,
-  Button,
-} from "@chakra-ui/react";
+import { Heading, Card, Center, Flex, Button } from "@chakra-ui/react";
 import InvoiceCard from "@/component/admin/invoice/InvoiceCard";
+import { useRouter } from "next/router";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function Invoice() {
+  const { user } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user == null) router.push("/login");
+  }, [user]);
+
   const exportToPDF = () => {
     const divToExport = document.getElementById("myDivToExport");
     const divWidth = divToExport.offsetWidth;

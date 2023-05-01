@@ -24,8 +24,17 @@ import {
 import TablePengeluaranHarian from "@/component/admin/pengeluaran-harian/TablePengeluaranHarian";
 import { useState, useEffect } from "react";
 import expensesQuery from "@/pages/api/expenses-query";
+import { useRouter } from "next/router";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function PengeluaranHarian() {
+  const { user } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user == null) router.push("/login");
+  }, [user]);
+
   const [pengeluaranHarian, setPengeluaranHarian] = useState();
   const [searchDate, setSearchDate] = useState("");
   const [filteredItems, setFilteredItems] = useState();

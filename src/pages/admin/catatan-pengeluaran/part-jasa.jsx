@@ -17,8 +17,17 @@ import {
 import { useState } from "react";
 import { DUMMY_PARTJASA } from "@/constant/DummyData";
 import TablePartJasa from "@/component/admin/part-jasa/TablePartJasa";
+import { useRouter } from "next/router";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function PartJasa() {
+  const { user } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user == null) router.push("/login");
+  }, [user]);
+
   const [partJasa, setPartJasa] = useState(DUMMY_PARTJASA);
   const [searchName, setSearchName] = useState("");
 

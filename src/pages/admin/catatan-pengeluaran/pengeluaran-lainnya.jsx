@@ -24,8 +24,17 @@ import {
 import { useState, useEffect } from "react";
 import TablePengeluaranLainnya from "@/component/admin/pengeluaran-lainnya/TablePengeluaranLainnya";
 import expensesQuery from "@/pages/api/expenses-query";
+import { useRouter } from "next/router";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function PengeluaranLainnya() {
+  const { user } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user == null) router.push("/login");
+  }, [user]);
+
   const [pengeluaranLainnya, setPengeluaranLainnya] = useState();
   const [filteredItems, setFilteredItems] = useState();
   const [searchDate, setSearchDate] = useState("");

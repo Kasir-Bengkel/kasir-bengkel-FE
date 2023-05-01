@@ -8,18 +8,38 @@ import {
   VisuallyHidden,
 } from "@chakra-ui/react";
 import { FaMinusCircle } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import stocksQuery from "@/pages/api/stocks-query";
 
 export default function FormStock({
-  ItemName,
+  StockId,
   Quantity,
-  EquityPrice,
-  SellingPrice,
-  Date,
   onChangeForm,
   index,
   onRemoveForm,
+  listStockId,
 }) {
+  const [stocks, setStocks] = useState();
+  useEffect(() => {
+    async function getStocksHandler() {
+      const stocksData = await stocksQuery({
+        method: "GET",
+      });
+      if (stocksData.data !== undefined) {
+        const { items } = stocksData.data;
+        if (listStockId.length === 0) {
+          setStocks(items);
+        } else {
+          const filteredStocks = items.filter(
+            (stocks) => !listStockId.includes(stocks.id)
+          );
+          setStocks(filteredStocks);
+        }
+      }
+    }
+    getStocksHandler();
+  }, []);
+
   const changeHandlerForm = (e) => {
     onChangeForm(index, e.target.name, e.target.value);
   };
@@ -32,17 +52,22 @@ export default function FormStock({
     <HStack mt={2}>
       <FormControl>
         <FormLabel>Pilih Stock</FormLabel>
-        <Select
-          name="ItemName"
-          borderColor={"gray.300"}
-          w={150}
-          value={ItemName}
-          onChange={changeHandlerForm}
-          placeholder={"pilih stock"}
-        >
-          <option value={"Spooring"}>Spooring| qty: 10</option>
-          <option value={"Karet Setabil"}>Karet Setabil | qty: 12</option>
-        </Select>
+        {stocks !== undefined && (
+          <Select
+            name="StockId"
+            borderColor={"gray.300"}
+            w={400}
+            value={StockId}
+            onChange={changeHandlerForm}
+            placeholder={"pilih stock"}
+          >
+            {stocks.map((stock) => (
+              <option value={stock.id}>
+                {stock.stockName} | qty: {stock.quantity}{" "}
+              </option>
+            ))}
+          </Select>
+        )}
       </FormControl>
       <FormControl>
         <FormLabel>Quantity</FormLabel>

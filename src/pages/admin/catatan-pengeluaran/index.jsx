@@ -13,9 +13,15 @@ import {
 } from "@chakra-ui/react";
 
 import { FcTodoList, FcNeutralDecision, FcEngineering } from "react-icons/fc";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function CatatanPengeluaran() {
+  const { user } = useAuthContext();
   const router = useRouter();
+
+  useEffect(() => {
+    if (user == null) router.push("/login");
+  }, [user]);
 
   return (
     <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
