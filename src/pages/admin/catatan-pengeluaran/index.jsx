@@ -11,6 +11,7 @@ import {
   Icon,
   Center,
 } from "@chakra-ui/react";
+import { useEffect } from "react";
 
 import { FcTodoList, FcNeutralDecision, FcEngineering } from "react-icons/fc";
 import { useAuthContext } from "@/context/AuthContext";

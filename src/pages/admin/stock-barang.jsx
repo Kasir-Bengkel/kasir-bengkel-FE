@@ -37,6 +37,20 @@ export default function StockBarang() {
     harga_modal: "",
     harga_jual: "",
   });
+  const [invalid, setInvalid] = useState(true);
+
+  useEffect(() => {
+    if (
+      newStockItem.qty === "" ||
+      newStockItem.harga_modal === "" ||
+      newStockItem.harga_jual === "" ||
+      newStockItem.nama_stock === ""
+    ) {
+      setInvalid(true);
+    } else {
+      setInvalid(false);
+    }
+  }, [newStockItem]);
 
   useEffect(() => {
     async function getStocksHandler() {
@@ -45,7 +59,8 @@ export default function StockBarang() {
       });
       if (stocksData.data !== undefined) {
         const { items } = stocksData.data;
-        setStock(items);
+        const filteredItems = items.filter((item) => item.types === "STOCK");
+        setStock(filteredItems);
       }
     }
     getStocksHandler();
@@ -91,7 +106,7 @@ export default function StockBarang() {
         harga_jual: "",
       });
 
-      // window.location.reload();
+      window.location.reload();
     } else {
       console.log("data gagal masuk " + newStocksData);
       return;
@@ -187,7 +202,11 @@ export default function StockBarang() {
                     placeholder="jumlah stock"
                     onChange={changeInputHandler}
                   />
-                  <Button onClick={simpanHandler} colorScheme="green">
+                  <Button
+                    onClick={simpanHandler}
+                    colorScheme="green"
+                    isDisabled={invalid}
+                  >
                     Simpan
                   </Button>
                 </SimpleGrid>

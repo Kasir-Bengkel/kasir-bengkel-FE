@@ -46,6 +46,19 @@ export default function PengeluaranLainnya() {
     catatan: "",
     date: "",
   });
+  const [invalid, setInvalid] = useState(true);
+
+  useEffect(() => {
+    if (
+      newPengeluaranLainnya.nominal === "" ||
+      newPengeluaranLainnya.date === "" ||
+      newPengeluaranLainnya.catatan === ""
+    ) {
+      setInvalid(true);
+    } else {
+      setInvalid(false);
+    }
+  }, [newPengeluaranLainnya]);
 
   useEffect(() => {
     async function getExpensesHandler() {
@@ -205,6 +218,7 @@ export default function PengeluaranLainnya() {
                   w={"220px"}
                   colorScheme={"blue"}
                   onClick={submitHandler}
+                  isDisabled={invalid}
                 >
                   Submit
                 </Button>

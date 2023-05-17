@@ -46,6 +46,19 @@ export default function PengeluaranHarian() {
     catatan: "",
     date: "",
   });
+  const [invalid, setInvalid] = useState(true);
+
+  useEffect(() => {
+    if (
+      newPengeluaranHarian.nominal === "" ||
+      newPengeluaranHarian.date === "" ||
+      newPengeluaranHarian.catatan === ""
+    ) {
+      setInvalid(true);
+    } else {
+      setInvalid(false);
+    }
+  }, [newPengeluaranHarian]);
 
   useEffect(() => {
     async function getExpensesHandler() {
@@ -205,6 +218,7 @@ export default function PengeluaranHarian() {
                   w={"220px"}
                   colorScheme={"blue"}
                   onClick={submitHandler}
+                  isDisabled={invalid}
                 >
                   Submit
                 </Button>

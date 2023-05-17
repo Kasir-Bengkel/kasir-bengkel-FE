@@ -12,12 +12,12 @@ import { FaMinusCircle } from "react-icons/fa";
 import { useState, useRef } from "react";
 
 export default function FormPartJasa({
-  itemName,
-  equityPrice,
-  sellingPrice,
-  quantity,
-  types,
-  date,
+  ItemName,
+  EquityPrice,
+  SellingPrice,
+  Quantity,
+  Types,
+  Date,
   onRemoveForm,
   onChangeForm,
   index,
@@ -33,9 +33,9 @@ export default function FormPartJasa({
 
   const qtyStateHandler = (e) => {
     setQtyState(!qtyState);
-    onChangeForm(index, "types", qtyState ? 3 : 2);
+    onChangeForm(index, "Types", qtyState ? 3 : 2);
     if (qtyState) {
-      onChangeForm(index, "quantity", 0);
+      onChangeForm(index, "Quantity", 1);
     }
   };
 
@@ -44,9 +44,9 @@ export default function FormPartJasa({
       <FormControl>
         <FormLabel>Nama Part/Jasa</FormLabel>
         <Input
-          name="itemName"
+          name="ItemName"
           type={"text"}
-          value={itemName}
+          value={ItemName}
           onChange={changeHandlerForm}
         />
       </FormControl>
@@ -55,8 +55,8 @@ export default function FormPartJasa({
         <InputGroup>
           <InputLeftAddon children="Rp" />
           <Input
-            name="equityPrice"
-            value={equityPrice}
+            name="EquityPrice"
+            value={EquityPrice}
             type={"number"}
             onChange={changeHandlerForm}
           />
@@ -67,8 +67,8 @@ export default function FormPartJasa({
         <InputGroup>
           <InputLeftAddon children="Rp" />
           <Input
-            name="sellingPrice"
-            value={sellingPrice}
+            name="SellingPrice"
+            value={SellingPrice}
             type={"number"}
             onChange={changeHandlerForm}
           />
@@ -80,8 +80,8 @@ export default function FormPartJasa({
           <FormLabel>Quantity</FormLabel>
           <Checkbox
             defaultChecked
-            name="types"
-            value={types}
+            name="Types"
+            value={Types}
             onChange={qtyStateHandler}
           >
             Berkuantitas?
@@ -90,12 +90,12 @@ export default function FormPartJasa({
 
         <HStack>
           <Input
-            name="quantity"
+            name="Quantity"
             borderColor={"gray.300"}
             type={"number"}
-            value={quantity}
+            value={Quantity}
             onChange={(e) => {
-              onChangeForm(index, e.target.name, parseInt(e.target.value));
+              onChangeForm(index, e.target.name, e.target.value);
             }}
             disabled={qtyState ? false : true}
           />

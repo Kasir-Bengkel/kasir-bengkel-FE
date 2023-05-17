@@ -7,9 +7,18 @@ const salesOrderQuery = async (req, res) => {
   switch (req.method) {
     case "POST":
       try {
+        const body = {
+          LicensePlate: req.body.fieldSalesOrder.LicensePlate,
+          VehicleName: req.body.fieldSalesOrder.VehicleName,
+          InvoiceDate: req.body.fieldSalesOrder.InvoiceDate,
+          PhoneNumber: req.body.fieldSalesOrder.PhoneNumber,
+          CustomerName: req.body.fieldSalesOrder.CustomerName,
+          MechanicsName: req.body.fieldSalesOrder.MechanicsName,
+          SalesOrderDetails: JSON.stringify(req.body.mergedStocksPartJasa),
+        };
         const result = await axios.post(
           API_SALESORDER,
-          qs.stringify(req.body),
+          qs.stringify(body),
           req.headers
         );
         return result;

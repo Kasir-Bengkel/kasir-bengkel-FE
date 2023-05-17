@@ -27,10 +27,13 @@ export default function FormStock({
       });
       if (stocksData.data !== undefined) {
         const { items } = stocksData.data;
+        const filteredTypeItems = items.filter(
+          (item) => item.types === "STOCK"
+        );
         if (listStockId.length === 0) {
-          setStocks(items);
+          setStocks(filteredTypeItems);
         } else {
-          const filteredStocks = items.filter(
+          const filteredStocks = filteredTypeItems.filter(
             (stocks) => !listStockId.includes(stocks.id)
           );
           setStocks(filteredStocks);
@@ -62,7 +65,7 @@ export default function FormStock({
             placeholder={"pilih stock"}
           >
             {stocks.map((stock) => (
-              <option value={stock.id}>
+              <option key={stock.id} value={stock.id}>
                 {stock.stockName} | qty: {stock.quantity}{" "}
               </option>
             ))}
@@ -88,7 +91,6 @@ export default function FormStock({
           />
         </HStack>
       </FormControl>
-      <VisuallyHidden></VisuallyHidden>
     </HStack>
   );
 }
