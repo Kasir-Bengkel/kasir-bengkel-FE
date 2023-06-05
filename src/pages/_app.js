@@ -4,11 +4,11 @@ import { AuthContextProvider } from "@/context/AuthContext";
 
 function App({ Component, pageProps }) {
   return (
-    <AuthContextProvider>
-      <ChakraProvider>
+    <ChakraProvider>
+      <AuthContextProvider>
         <Component {...pageProps} />
-      </ChakraProvider>
-    </AuthContextProvider>
+      </AuthContextProvider>
+    </ChakraProvider>
   );
 }
 
