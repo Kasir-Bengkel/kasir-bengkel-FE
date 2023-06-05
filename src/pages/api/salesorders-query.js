@@ -3,7 +3,7 @@ import qs from "qs";
 // import {BASE_URL, API_TOKEN} from "@env"
 
 const salesOrderQuery = async (req, res) => {
-  const API_SALESORDER = `https://localhost:44321/v1/salesorder`;
+  const API_SALESORDER = `${process.env.NEXT_PUBLIC_API_ADDRESS}/salesorder`;
   switch (req.method) {
     case "POST":
       try {

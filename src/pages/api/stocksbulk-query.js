@@ -1,9 +1,8 @@
 import axios from "axios";
 import qs from "qs";
-// import {BASE_URL, API_TOKEN} from "@env"
 
 const stocksBulkQuery = async (req, res) => {
-  const API_STOCKS = `https://localhost:44321/v1/stocks/bulk`;
+  const API_STOCKS = `${process.env.NEXT_PUBLIC_API_ADDRESS}/stocks/bulk`;
   switch (req.method) {
     case "POST":
       try {

@@ -3,7 +3,7 @@ import qs from "qs";
 // import {BASE_URL, API_TOKEN} from "@env"
 
 const stockQuery = async (req, res) => {
-  const API_STOCK = `https://localhost:44321/v1/stocks`;
+  const API_STOCK = `${process.env.NEXT_PUBLIC_API_ADDRESS}/stocks`;
   switch (req.method) {
     case "GET":
       try {

@@ -2,7 +2,7 @@ import axios from "axios";
 import qs from "qs";
 
 const expensesQuery = async (req, res) => {
-  const API_EXPENSE = `https://localhost:44321/v1/expenses`;
+  const API_EXPENSE = `${process.env.NEXT_PUBLIC_API_ADDRESS}/expenses`;
   switch (req.method) {
     case "POST":
       try {
