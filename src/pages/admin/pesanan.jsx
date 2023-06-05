@@ -46,14 +46,15 @@ export default function Pesanan() {
     PhoneNumber: "",
     CustomerName: "",
     MechanicsName: "",
+    Payment: "",
     SalesOrderDetails: [],
   });
-  const [salesOrderDetails, setSalesOrderDetails] = useState();
+
   const [totalPrice, setTotalPrice] = useState(0);
   const [invalidPrice, setInvalidPrice] = useState(true);
   const [invalidDetail, setInvalidDetail] = useState(true);
   const [error, isError] = useState(false);
-  const [isSubmit, setIsSubmit] = useState();
+  const [totalDiscount, setTotalDiscount] = useState(0);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -76,7 +77,7 @@ export default function Pesanan() {
         SellingPrice: 0,
         Quantity: 0,
         Types: 2,
-        Date: FormatDateDB(fieldSalesOrder.InvoiceDate),
+        Date: "29/04/2023 18:00:38 +07:00",
       },
     ]);
   };
@@ -122,6 +123,13 @@ export default function Pesanan() {
     setFieldsPartJasa(newFormFieldsPartJasa);
   };
 
+  const paymentTypeHandler = (e) => {
+    setFieldSalesOrder((prevState) => ({
+      ...prevState,
+      Payment: e.target.value,
+    }));
+  };
+
   const sidebarWidthHandler = (value) => {
     setSidebarWidth(value);
   };
@@ -130,6 +138,7 @@ export default function Pesanan() {
     setWindowsWidth(width);
   }, []);
 
+  //validation
   useEffect(() => {
     if (fieldsPartJasa.length > 0) {
       const hasEmptyValuePartJasa = fieldsPartJasa.some((obj) =>
@@ -150,27 +159,33 @@ export default function Pesanan() {
     }
   }, [fieldsPartJasa, fieldsStock]);
 
+  //validation
   useEffect(() => {
     const hasEmptyValueDetail = Object.values(fieldSalesOrder).some(
-      (value) => value === "" || value === 0 || value === ""
+      (value) =>
+        value === "" || value === 0 || value === undefined || value === null
     );
 
     if (hasEmptyValueDetail === false && invalidPrice === false) {
+      setInvalidDetail(false);
+    }
+
+    if (totalPrice > 0 && totalPrice !== NaN) {
       setInvalidDetail(false);
       return;
     }
 
     setInvalidDetail(true);
-  }, [fieldSalesOrder, invalidPrice]);
+  }, [fieldSalesOrder, invalidPrice, totalPrice]);
 
   const checkPrizeHandler = async () => {
     let accPricePartJasa = 0;
     let accPriceStock = 0;
+
     if (fieldsPartJasa.length > 0) {
       accPricePartJasa = fieldsPartJasa.reduce((accumulator, currentValue) => {
-        const { EquityPrice, SellingPrice, Quantity } = currentValue;
-        const price =
-          (parseInt(SellingPrice) - parseInt(EquityPrice)) * parseInt(Quantity);
+        const { SellingPrice, Quantity } = currentValue;
+        const price = parseInt(SellingPrice) * parseInt(Quantity);
         return accumulator + price;
       }, 0);
     }
@@ -185,24 +200,23 @@ export default function Pesanan() {
           params: fieldsStock[i].StockId,
         });
         arrPriceStock.push({
-          EquityPrice: getStocksQty.data.equityPrice,
           SellingPrice: getStocksQty.data.sellingPrice,
           Quantity: fieldsStock[i].Quantity,
         });
       }
       accPriceStock = arrPriceStock.reduce((accumulator, currentValue) => {
-        const { EquityPrice, SellingPrice, Quantity } = currentValue;
-        const price =
-          (parseInt(SellingPrice) - parseInt(EquityPrice)) * parseInt(Quantity);
+        const { SellingPrice, Quantity } = currentValue;
+        const price = parseInt(SellingPrice) * parseInt(Quantity);
         return accumulator + price;
       }, 0);
     }
+
     if (accPriceStock === 0) {
-      setTotalPrice(accPricePartJasa);
+      setTotalPrice(accPricePartJasa - totalDiscount);
     } else if (accPricePartJasa === 0) {
-      setTotalPrice(accPriceStock);
-    } else if (accPricePartJasa !== 0 && accPriceStock) {
-      setTotalPrice(accPricePartJasa + accPriceStock);
+      setTotalPrice(accPriceStock - totalDiscount);
+    } else if (accPricePartJasa !== 0 && accPriceStock !== 0) {
+      setTotalPrice(accPricePartJasa + accPriceStock - totalDiscount);
     }
   };
 
@@ -221,6 +235,8 @@ export default function Pesanan() {
         },
         body: fieldsPartJasa,
       });
+
+      console.log(newStocksBulk);
 
       for (let i = 0; i < newStocksBulk.data.stocksId.length; i++) {
         const getStocksQty = await stockQuery({
@@ -258,7 +274,7 @@ export default function Pesanan() {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: { fieldSalesOrder, mergedStocksPartJasa },
+      body: { fieldSalesOrder, totalDiscount, mergedStocksPartJasa },
     });
 
     if (newSalesOrder.status === 200) {
@@ -446,7 +462,11 @@ export default function Pesanan() {
               <Text>{formatMoney(totalPrice)}</Text>
             </VStack>
             <HStack>
-              <Select borderColor={"gray.300"} placeholder={"tipe pembayaran"}>
+              <Select
+                borderColor={"gray.300"}
+                placeholder={"tipe pembayaran"}
+                onChange={paymentTypeHandler}
+              >
                 <option value={"cash"}>Cash</option>
                 <option value={"debit"}>Debit</option>
                 <option value={"transfer"}>Transfer</option>
@@ -457,7 +477,7 @@ export default function Pesanan() {
                 <Input
                   type={"number"}
                   placeholder="diskon"
-                  onChange={(e) => setTotalDiscount(e.target.value)}
+                  onChange={(e) => setTotalDiscount(parseInt(e.target.value))}
                 />
               </InputGroup>
               <Button

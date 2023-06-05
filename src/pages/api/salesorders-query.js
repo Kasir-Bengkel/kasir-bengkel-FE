@@ -14,6 +14,8 @@ const salesOrderQuery = async (req, res) => {
           PhoneNumber: req.body.fieldSalesOrder.PhoneNumber,
           CustomerName: req.body.fieldSalesOrder.CustomerName,
           MechanicsName: req.body.fieldSalesOrder.MechanicsName,
+          Discount: req.body.totalDiscount,
+          Payment: req.body.fieldSalesOrder.Payment,
           SalesOrderDetails: JSON.stringify(req.body.mergedStocksPartJasa),
         };
         const result = await axios.post(
