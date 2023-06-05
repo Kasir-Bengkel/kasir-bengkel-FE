@@ -33,7 +33,7 @@ export default function PengeluaranLainnya() {
 
   useEffect(() => {
     if (user == null) router.push("/login");
-  }, [user]);
+  }, [user, router]);
 
   const [pengeluaranLainnya, setPengeluaranLainnya] = useState();
   const [filteredItems, setFilteredItems] = useState();

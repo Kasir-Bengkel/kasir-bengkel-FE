@@ -25,7 +25,7 @@ export default function StockBarang() {
 
   useEffect(() => {
     if (user == null) router.push("/login");
-  }, [user]);
+  }, [user, router]);
 
   const [searchStockName, setSearchStockName] = useState("");
   const [stock, setStock] = useState();

@@ -12,7 +12,7 @@ export default function Invoice() {
 
   useEffect(() => {
     if (user == null) router.push("/login");
-  }, [user]);
+  }, [user, router]);
 
   const exportToPDF = () => {
     const divToExport = document.getElementById("myDivToExport");

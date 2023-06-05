@@ -41,7 +41,7 @@ export default function FormStock({
       }
     }
     getStocksHandler();
-  }, []);
+  }, [listStockId]);
 
   const changeHandlerForm = (e) => {
     onChangeForm(index, e.target.name, e.target.value);

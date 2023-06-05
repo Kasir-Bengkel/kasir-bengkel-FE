@@ -26,7 +26,7 @@ export default function PartJasa() {
 
   useEffect(() => {
     if (user == null) router.push("/login");
-  }, [user]);
+  }, [user, router]);
 
   const [partJasa, setPartJasa] = useState(DUMMY_PARTJASA);
   const [searchName, setSearchName] = useState("");

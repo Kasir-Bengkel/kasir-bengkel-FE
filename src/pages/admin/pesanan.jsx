@@ -136,7 +136,7 @@ export default function Pesanan() {
 
   useEffect(() => {
     setWindowsWidth(width);
-  }, []);
+  }, [width]);
 
   //validation
   useEffect(() => {
@@ -308,7 +308,7 @@ export default function Pesanan() {
               />
               {!isError ? (
                 <FormHelperText>
-                  Enter the email you'd like to receive the newsletter on.
+                  Enter the email you&apos;d like to receive the newsletter on.
                 </FormHelperText>
               ) : (
                 <FormErrorMessage>Email is required.</FormErrorMessage>
@@ -349,7 +349,7 @@ export default function Pesanan() {
             <FormControl>
               <FormLabel>No. Hp</FormLabel>
               <InputGroup>
-                <InputLeftAddon children="+62" />
+                <InputLeftAddon>{"+62"}</InputLeftAddon>
                 <Input
                   borderColor={"gray.300"}
                   type={"text"}
@@ -473,7 +473,7 @@ export default function Pesanan() {
                 <option value={"cashtrasnfer"}>Cash + Transfer</option>
               </Select>
               <InputGroup>
-                <InputLeftAddon children="Rp" />
+                <InputLeftAddon>{"Rp"}</InputLeftAddon>
                 <Input
                   type={"number"}
                   placeholder="diskon"

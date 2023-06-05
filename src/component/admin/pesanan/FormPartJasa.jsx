@@ -53,7 +53,7 @@ export default function FormPartJasa({
       <FormControl>
         <FormLabel>Harga Modal</FormLabel>
         <InputGroup>
-          <InputLeftAddon children="Rp" />
+          <InputLeftAddon>{"Rp"}</InputLeftAddon>
           <Input
             name="EquityPrice"
             value={EquityPrice}
@@ -65,7 +65,7 @@ export default function FormPartJasa({
       <FormControl>
         <FormLabel>Harga Jual</FormLabel>
         <InputGroup>
-          <InputLeftAddon children="Rp" />
+          <InputLeftAddon>{"Rp"}</InputLeftAddon>
           <Input
             name="SellingPrice"
             value={SellingPrice}

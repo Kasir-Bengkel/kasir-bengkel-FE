@@ -22,7 +22,7 @@ export default function CatatanPengeluaran() {
 
   useEffect(() => {
     if (user == null) router.push("/login");
-  }, [user]);
+  }, [user, router]);
 
   return (
     <SidebarContainer onSidebarWidth={(v) => console.log(v)}>

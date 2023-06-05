@@ -16,7 +16,7 @@ import { useState } from "react";
 import signIn from "@/firebase/auth/signin";
 import { useRouter } from "next/router";
 
-export default function login() {
+export default function Login() {
   const [user, setUser] = useState({
     email: "",
     password: "",

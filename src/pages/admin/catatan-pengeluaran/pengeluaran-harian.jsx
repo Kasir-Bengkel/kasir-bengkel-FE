@@ -33,7 +33,7 @@ export default function PengeluaranHarian() {
 
   useEffect(() => {
     if (user == null) router.push("/login");
-  }, [user]);
+  }, [user, router]);
 
   const [pengeluaranHarian, setPengeluaranHarian] = useState();
   const [searchDate, setSearchDate] = useState("");

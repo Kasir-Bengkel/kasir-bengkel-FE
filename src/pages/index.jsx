@@ -12,7 +12,7 @@ export default function Home() {
   const { user } = useAuthContext();
   useEffect(() => {
     if (user !== null) router.push("/admin");
-  }, [user]);
+  }, [user, router]);
   return (
     <>
       <Head>

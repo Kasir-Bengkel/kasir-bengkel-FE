@@ -13,7 +13,7 @@ export default function HistoryPesanan() {
 
   useEffect(() => {
     if (user == null) router.push("/login");
-  }, [user]);
+  }, [user, router]);
 
   const [searchInvoice, setSearchInvoice] = useState("");
   const [searchPlat, setSearchPlat] = useState("");

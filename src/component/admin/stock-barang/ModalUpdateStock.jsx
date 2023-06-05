@@ -65,7 +65,7 @@ export default function ModalUpdateStock({
           <FormControl mt={4}>
             <FormLabel>Harga Modal</FormLabel>
             <InputGroup>
-              <InputLeftAddon children="Rp" />
+              <InputLeftAddon>{"Rp"}</InputLeftAddon>
               <Input
                 type={"number"}
                 name="hargaModal"
@@ -78,7 +78,7 @@ export default function ModalUpdateStock({
           <FormControl mt={4}>
             <FormLabel>Harga Jual</FormLabel>
             <InputGroup>
-              <InputLeftAddon children="Rp" />
+              <InputLeftAddon>{"Rp"}</InputLeftAddon>
               <Input
                 type={"number"}
                 name="hargaJual"
