@@ -48,6 +48,13 @@ export default function Login() {
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
     >
+      <a
+        onClick={() => {
+          router.push("/");
+        }}
+      >
+        Kembali ke Home
+      </a>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"}>Sign in to your account</Heading>
