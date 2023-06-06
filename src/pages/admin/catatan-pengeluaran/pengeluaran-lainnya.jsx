@@ -139,7 +139,7 @@ export default function PengeluaranLainnya() {
         Date: updatedData.date,
         Nominal: updatedData.nominal,
         Notes: updatedData.catatan,
-        Types: 1,
+        Types: 2,
       },
     });
     if (updateExpensesData.status === 204) {
