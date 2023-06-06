@@ -24,7 +24,7 @@ import {
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 
-export default function Navbar() {
+export default function Navbar({ onSignInHandler }) {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -80,7 +80,7 @@ export default function Navbar() {
             fontSize={"sm"}
             fontWeight={400}
             colorScheme={"blue"}
-            href={"#"}
+            onClick={onSignInHandler}
           >
             Sign In
           </Button>
