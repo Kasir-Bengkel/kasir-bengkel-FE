@@ -10,11 +10,13 @@ import {
   Heading,
   Text,
   useColorModeValue,
+  Icon,
 } from "@chakra-ui/react";
-
+import { MdKeyboardBackspace } from "react-icons/md";
 import { useState } from "react";
 import signIn from "@/firebase/auth/signin";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
 
 export default function Login() {
   const [user, setUser] = useState({
@@ -39,6 +41,10 @@ export default function Login() {
     router.push("/admin");
   };
 
+  // onClick={() => {
+  //   router.push("/");
+  // }}
+
   return (
     <Flex
       minH={"100vh"}
@@ -46,19 +52,15 @@ export default function Login() {
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
     >
-      <a
-        onClick={() => {
-          router.push("/");
-        }}
-      >
-        Kembali ke Home
-      </a>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-        <Stack align={"center"}>
+        <Stack align={"flex-start"}>
+          <Link as={NextLink} href="/">
+            <Flex align={"center"} gap={2}>
+              <Icon as={MdKeyboardBackspace} w={8} h={8} />
+              Back to home
+            </Flex>
+          </Link>
           <Heading fontSize={"4xl"}>Sign in to your account</Heading>
-          <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy all of our cool <Link color={"blue.400"}>features</Link> ✌️
-          </Text>
         </Stack>
         <Box
           rounded={"lg"}
@@ -67,8 +69,8 @@ export default function Login() {
           p={8}
         >
           <Stack spacing={4}>
-            <FormControl id="username">
-              <FormLabel>Username</FormLabel>
+            <FormControl id="email">
+              <FormLabel>email</FormLabel>
               <Input type="email" name="email" onChange={changeFormHandler} />
             </FormControl>
             <FormControl id="password">
