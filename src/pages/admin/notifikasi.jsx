@@ -2,6 +2,7 @@ import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
 import { Card } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
+import { useEffect } from "react";
 
 export default function Notifikasi() {
   const { user } = useAuthContext();

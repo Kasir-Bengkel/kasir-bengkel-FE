@@ -12,8 +12,8 @@ import {
 } from "@chakra-ui/react";
 
 import { formatMoney } from "@/helper/FormatMoney";
-import ModalUpdateStock from "./ModalUpdateStock";
-import AlertDelete from "../AlertDelete";
+import ModalUpdateStock from "../Modal/ModalUpdateStock";
+import AlertDelete from "../alert/AlertDelete";
 
 export default function CardStock({
   id,

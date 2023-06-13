@@ -8,8 +8,8 @@ import {
 } from "@chakra-ui/react";
 import { formatMoney } from "@/helper/FormatMoney";
 import { formatDate } from "@/helper/FormatDate";
-import ModalUpdatePengeluaran from "@/component/admin/ModalUpdatePengeluaran";
-import AlertDelete from "@/component/admin/AlertDelete";
+import ModalUpdatePengeluaran from "@/component/admin/Modal/ModalUpdatePengeluaran";
+import AlertDelete from "@/component/admin/alert/AlertDelete";
 
 export default function TablePengeluaranLainnya({
   id,

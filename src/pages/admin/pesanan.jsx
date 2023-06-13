@@ -29,8 +29,8 @@ import salesOrderQuery from "../api/salesorders-query";
 import stockQuery from "../api/stock-query";
 import stocksBulkQuery from "../api/stocksbulk-query";
 import { formatMoney } from "@/helper/FormatMoney";
-import { FormatDateDB } from "@/helper/FormatDateDB";
-import AlertSubmit from "@/component/admin/AlertSubmit";
+import AlertSubmit from "@/component/admin/alert/AlertSubmit";
+import AlertErrorSubmitPesanan from "@/component/admin/alert/AlertErrorSubmitPesanan";
 
 export default function Pesanan() {
   const [fieldsStock, setFieldsStock] = useState([]);
@@ -54,9 +54,20 @@ export default function Pesanan() {
   const [invalidPrice, setInvalidPrice] = useState(true);
   const [invalidDetail, setInvalidDetail] = useState(true);
   const [error, isError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [totalDiscount, setTotalDiscount] = useState(0);
+  const [isFieldChange, setIsFieldChange] = useState(true);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenSubmit,
+    onOpen: onOpenSubmit,
+    onClose: onCloseSubmit,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenError,
+    onOpen: onOpenError,
+    onClose: onCloseError,
+  } = useDisclosure();
 
   const addFieldStock = () => {
     setFieldsStock([
@@ -168,17 +179,20 @@ export default function Pesanan() {
 
     if (hasEmptyValueDetail === false && invalidPrice === false) {
       setInvalidDetail(false);
+      if (totalPrice > 0 && totalPrice !== NaN) {
+        setInvalidDetail(false);
+      }
+    } else {
+      setInvalidDetail(true);
     }
-
-    if (totalPrice > 0 && totalPrice !== NaN) {
-      setInvalidDetail(false);
-      return;
-    }
-
-    setInvalidDetail(true);
   }, [fieldSalesOrder, invalidPrice, totalPrice]);
 
+  useEffect(() => {
+    setIsFieldChange(true);
+  }, [fieldsStock, fieldsPartJasa, totalDiscount]);
+
   const checkPrizeHandler = async () => {
+    let arrPriceStock = [];
     let accPricePartJasa = 0;
     let accPriceStock = 0;
 
@@ -190,7 +204,6 @@ export default function Pesanan() {
       }, 0);
     }
     if (fieldsStock.length > 0) {
-      let arrPriceStock = [];
       for (let i = 0; i < fieldsStock.length; i++) {
         const getStocksQty = await stockQuery({
           method: "GET",
@@ -202,6 +215,7 @@ export default function Pesanan() {
         arrPriceStock.push({
           SellingPrice: getStocksQty.data.sellingPrice,
           Quantity: fieldsStock[i].Quantity,
+          qtyStatus: fieldsStock[i].Quantity <= getStocksQty.data.quantity,
         });
       }
       accPriceStock = arrPriceStock.reduce((accumulator, currentValue) => {
@@ -211,17 +225,28 @@ export default function Pesanan() {
       }, 0);
     }
 
-    if (accPriceStock === 0) {
-      setTotalPrice(accPricePartJasa - totalDiscount);
-    } else if (accPricePartJasa === 0) {
-      setTotalPrice(accPriceStock - totalDiscount);
-    } else if (accPricePartJasa !== 0 && accPriceStock !== 0) {
-      setTotalPrice(accPricePartJasa + accPriceStock - totalDiscount);
+    const hasFalseQuantityStatus = arrPriceStock.some(
+      (item) => item.qtyStatus === false
+    );
+
+    if (hasFalseQuantityStatus === true) {
+      setErrorMsg("stock tidak cukup");
+      onOpenError();
+      return;
+    } else {
+      if (accPriceStock === 0) {
+        setTotalPrice(accPricePartJasa - totalDiscount);
+      } else if (accPricePartJasa === 0) {
+        setTotalPrice(accPriceStock - totalDiscount);
+      } else if (accPricePartJasa !== 0 && accPriceStock !== 0) {
+        setTotalPrice(accPricePartJasa + accPriceStock - totalDiscount);
+      }
     }
+    setIsFieldChange(false);
   };
 
   const submitHandler = async () => {
-    onClose();
+    onCloseSubmit();
 
     let arrNewPartJasa = [];
     let arrNewStocks;
@@ -288,11 +313,18 @@ export default function Pesanan() {
   return (
     <SidebarContainer onSidebarWidth={sidebarWidthHandler}>
       <AlertSubmit
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isOpenSubmit}
+        onClose={onCloseSubmit}
         onAcceptHandler={submitHandler}
-        onCancelHandler={onClose}
+        onCancelHandler={onCloseSubmit}
       />
+      <AlertErrorSubmitPesanan
+        isOpen={isOpenError}
+        onClose={onCloseError}
+        onCloseHandler={onCloseError}
+      >
+        {errorMsg}
+      </AlertErrorSubmitPesanan>
       <Flex gap={4}>
         <Card p={4} w={"30%"}>
           <VStack>
@@ -480,22 +512,25 @@ export default function Pesanan() {
                   onChange={(e) => setTotalDiscount(parseInt(e.target.value))}
                 />
               </InputGroup>
-              <Button
-                px={8}
-                colorScheme={"blue"}
-                onClick={checkPrizeHandler}
-                isDisabled={invalidPrice}
-              >
-                Cek Harga
-              </Button>
-              <Button
-                px={8}
-                colorScheme={"blue"}
-                onClick={onOpen}
-                isDisabled={invalidDetail}
-              >
-                Submit
-              </Button>
+              {isFieldChange ? (
+                <Button
+                  px={8}
+                  colorScheme={"blue"}
+                  onClick={checkPrizeHandler}
+                  isDisabled={invalidPrice}
+                >
+                  Cek Harga
+                </Button>
+              ) : (
+                <Button
+                  px={8}
+                  colorScheme={"blue"}
+                  onClick={onOpenSubmit}
+                  isDisabled={invalidDetail}
+                >
+                  Submit
+                </Button>
+              )}
             </HStack>
           </Flex>
         </Box>
