@@ -30,7 +30,7 @@ import stockQuery from "../api/stock-query";
 import stocksBulkQuery from "../api/stocksbulk-query";
 import { formatMoney } from "@/helper/FormatMoney";
 import AlertSubmit from "@/component/admin/alert/AlertSubmit";
-import AlertErrorSubmitPesanan from "@/component/admin/alert/AlertErrorSubmitPesanan";
+import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
 
 export default function Pesanan() {
   const [fieldsStock, setFieldsStock] = useState([]);
@@ -318,13 +318,13 @@ export default function Pesanan() {
         onAcceptHandler={submitHandler}
         onCancelHandler={onCloseSubmit}
       />
-      <AlertErrorSubmitPesanan
+      <AlertErrorSubmit
         isOpen={isOpenError}
         onClose={onCloseError}
         onCloseHandler={onCloseError}
       >
         {errorMsg}
-      </AlertErrorSubmitPesanan>
+      </AlertErrorSubmit>
       <Flex gap={4}>
         <Card p={4} w={"30%"}>
           <VStack>

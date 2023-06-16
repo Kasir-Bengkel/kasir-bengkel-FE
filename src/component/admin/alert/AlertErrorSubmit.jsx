@@ -10,7 +10,7 @@ import {
 
 import { useRef } from "react";
 
-export default function AlertErrorSubmitPesanan({
+export default function AlertErrorSubmit({
   isOpen,
   onClose,
   onCloseHandler,
@@ -33,7 +33,11 @@ export default function AlertErrorSubmitPesanan({
           <AlertDialogBody>{children}</AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={() => onCloseHandler(false)}>
+            <Button
+              colorScheme="red"
+              ref={cancelRef}
+              onClick={() => onCloseHandler(false)}
+            >
               Okay
             </Button>
           </AlertDialogFooter>

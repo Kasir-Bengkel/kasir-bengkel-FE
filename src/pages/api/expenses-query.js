@@ -23,7 +23,7 @@ const expensesQuery = async (req, res) => {
     case "GET":
       try {
         const result = await axios.get(
-          `${API_EXPENSE}?Types=${req.params.type}&SortLabel=Data&SortOrder=Descending`
+          `${API_EXPENSE}?Types=${req.params.type}&SortLabel=Data&SortOrder=2`
         );
         return result;
       } catch (e) {

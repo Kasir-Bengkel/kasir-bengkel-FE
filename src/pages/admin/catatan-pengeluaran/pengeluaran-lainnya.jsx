@@ -19,6 +19,7 @@ import {
   TabPanel,
   Tab,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import { useState, useEffect } from "react";
@@ -26,10 +27,23 @@ import TablePengeluaranLainnya from "@/component/admin/pengeluaran-lainnya/Table
 import expensesQuery from "@/pages/api/expenses-query";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
+import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
+import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
 
 export default function PengeluaranLainnya() {
   const { user } = useAuthContext();
   const router = useRouter();
+
+  const {
+    isOpen: isOpenSubmitSuccess,
+    onOpen: onOpenSubmitSuccess,
+    onClose: onCloseSubmitSuccess,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenSubmitError,
+    onOpen: onOpenSubmitError,
+    onClose: onCloseSubmitError,
+  } = useDisclosure();
 
   useEffect(() => {
     if (user == null) router.push("/login");
@@ -47,6 +61,8 @@ export default function PengeluaranLainnya() {
     date: "",
   });
   const [invalid, setInvalid] = useState(true);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     if (
@@ -65,7 +81,7 @@ export default function PengeluaranLainnya() {
       const expensesData = await expensesQuery({
         method: "GET",
         params: {
-          type: "other",
+          type: 2,
         },
       });
       if (expensesData.data !== undefined) {
@@ -117,11 +133,11 @@ export default function PengeluaranLainnya() {
         harga_modal: "",
         harga_jual: "",
       });
-
-      window.location.reload();
+      setSuccessMsg("Data berhasil tersimpan!");
+      onOpenSubmitSuccess();
     } else {
-      console.log("data gagal masuk " + newExpensesData);
-      return;
+      setErrorMsg("Data gagal tersimpan");
+      onOpenSubmitError();
     }
   };
 
@@ -143,10 +159,11 @@ export default function PengeluaranLainnya() {
       },
     });
     if (updateExpensesData.status === 204) {
-      window.location.reload();
+      setSuccessMsg("Data berhasil diperbarui!");
+      onOpenSubmitSuccess();
     } else {
-      console.log("data gagal update " + updateExpensesData.messages);
-      return;
+      setErrorMsg("Data gagal diperbarui!");
+      onOpenSubmitError();
     }
   };
 
@@ -158,118 +175,136 @@ export default function PengeluaranLainnya() {
       },
     });
     if (deleteExpensesData.status === 204) {
-      window.location.reload();
+      setSuccessMsg("Data berhasil dihapus!");
+      onOpenSubmitSuccess();
     } else {
-      console.log("data gagal terhapus " + deleteExpensesData);
-      return;
+      setErrorMsg("Data gagal dihapus!");
+      onOpenSubmitError();
     }
   };
 
   return (
-    <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
-      <Heading>Pengeluaran Lainnya</Heading>
-
-      <Card mt={"12px"} px={4} py={8}>
-        <Tabs variant="enclosed">
-          <TabList>
-            <Tab>Cari</Tab>
-            <Tab>Pengeluaran Baru</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <HStack spacing={6}>
-                <Input
-                  type={"date"}
-                  onChange={(e) => setSearchDate(e.target.value)}
-                />
-                <Input
-                  onChange={(e) => setSearchNominal(e.target.value)}
-                  placeholder="Nominal"
-                  type={"number"}
-                />
-                <Input
-                  onChange={(e) => setSearchCatatan(e.target.value)}
-                  placeholder="Catatan"
-                />
-              </HStack>
-            </TabPanel>
-            <TabPanel>
-              <HStack spacing={6}>
-                <Input
-                  name="date"
-                  onChange={changeInputHandler}
-                  value={newPengeluaranLainnya.date}
-                  type={"date"}
-                />
-                <Input
-                  name="nominal"
-                  onChange={changeInputHandler}
-                  type={"number"}
-                  value={newPengeluaranLainnya.nominal}
-                  placeholder="Nominal"
-                />
-                <Input
-                  name="catatan"
-                  onChange={changeInputHandler}
-                  value={newPengeluaranLainnya.catatan}
-                  placeholder="Catatan"
-                />
-                <Button
-                  w={"220px"}
-                  colorScheme={"blue"}
-                  onClick={submitHandler}
-                  isDisabled={invalid}
-                >
-                  Submit
-                </Button>
-              </HStack>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </Card>
-
-      <VStack
-        mt={"12px"}
-        spacing={8}
-        overflowY={"scroll"}
-        alignItems={"unset"}
-        maxH={"60vh"}
-        pb={4}
+    <>
+      <AlertSuccessSubmit
+        isOpen={isOpenSubmitSuccess}
+        onOpen={onOpenSubmitSuccess}
+        onCloseHandler={onCloseSubmitSuccess}
       >
-        {filteredItems !== undefined && (
-          <Card mt={"12px"} px={4} py={8}>
-            <TableContainer mt={"12px"}>
-              <Table variant="striped" colorScheme={"blackAlpha"}>
-                <Thead>
-                  <Tr>
-                    <Th>Tanggal</Th>
-                    <Th>Nominal</Th>
-                    <Th>Catatan</Th>
-                    <Th>
-                      <Flex justifyContent={"center"}>
-                        <Text>Action</Text>
-                      </Flex>
-                    </Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {filteredItems.map((item) => (
-                    <TablePengeluaranLainnya
-                      key={item.id}
-                      id={item.id}
-                      nominal={item.nominal}
-                      catatan={item.notes}
-                      date={item.date}
-                      onUpdateHandler={updateHandler}
-                      onDeleteHandler={deleteHandler}
-                    />
-                  ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </Card>
-        )}
-      </VStack>
-    </SidebarContainer>
+        {successMsg}
+      </AlertSuccessSubmit>
+      <AlertErrorSubmit
+        isOpen={isOpenSubmitError}
+        onOpen={onOpenSubmitError}
+        onCloseHandler={onCloseSubmitError}
+      >
+        {errorMsg}
+      </AlertErrorSubmit>
+
+      <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
+        <Heading>Pengeluaran Lainnya</Heading>
+
+        <Card mt={"12px"} px={4} py={8}>
+          <Tabs variant="enclosed">
+            <TabList>
+              <Tab>Cari</Tab>
+              <Tab>Pengeluaran Baru</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <HStack spacing={6}>
+                  <Input
+                    type={"date"}
+                    onChange={(e) => setSearchDate(e.target.value)}
+                  />
+                  <Input
+                    onChange={(e) => setSearchNominal(e.target.value)}
+                    placeholder="Nominal"
+                    type={"number"}
+                  />
+                  <Input
+                    onChange={(e) => setSearchCatatan(e.target.value)}
+                    placeholder="Catatan"
+                  />
+                </HStack>
+              </TabPanel>
+              <TabPanel>
+                <HStack spacing={6}>
+                  <Input
+                    name="date"
+                    onChange={changeInputHandler}
+                    value={newPengeluaranLainnya.date}
+                    type={"date"}
+                  />
+                  <Input
+                    name="nominal"
+                    onChange={changeInputHandler}
+                    type={"number"}
+                    value={newPengeluaranLainnya.nominal}
+                    placeholder="Nominal"
+                  />
+                  <Input
+                    name="catatan"
+                    onChange={changeInputHandler}
+                    value={newPengeluaranLainnya.catatan}
+                    placeholder="Catatan"
+                  />
+                  <Button
+                    w={"220px"}
+                    colorScheme={"blue"}
+                    onClick={submitHandler}
+                    isDisabled={invalid}
+                  >
+                    Submit
+                  </Button>
+                </HStack>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Card>
+
+        <VStack
+          mt={"12px"}
+          spacing={8}
+          overflowY={"scroll"}
+          alignItems={"unset"}
+          maxH={"60vh"}
+          pb={4}
+        >
+          {filteredItems !== undefined && (
+            <Card mt={"12px"} px={4} py={8}>
+              <TableContainer mt={"12px"}>
+                <Table variant="striped" colorScheme={"blackAlpha"}>
+                  <Thead>
+                    <Tr>
+                      <Th>Tanggal</Th>
+                      <Th>Nominal</Th>
+                      <Th>Catatan</Th>
+                      <Th>
+                        <Flex justifyContent={"center"}>
+                          <Text>Action</Text>
+                        </Flex>
+                      </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {filteredItems.map((item) => (
+                      <TablePengeluaranLainnya
+                        key={item.id}
+                        id={item.id}
+                        nominal={item.nominal}
+                        catatan={item.notes}
+                        date={item.date}
+                        onUpdateHandler={updateHandler}
+                        onDeleteHandler={deleteHandler}
+                      />
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </Card>
+          )}
+        </VStack>
+      </SidebarContainer>
+    </>
   );
 }

@@ -12,16 +12,32 @@ import {
   Button,
   Card,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import CardStock from "@/component/admin/stock-barang/CardStock";
 import stocksQuery from "../api/stocks-query";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
+import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
+import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
 
 export default function StockBarang() {
   const { user } = useAuthContext();
   const router = useRouter();
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const {
+    isOpen: isOpenSubmitSuccess,
+    onOpen: onOpenSubmitSuccess,
+    onClose: onCloseSubmitSuccess,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenSubmitError,
+    onOpen: onOpenSubmitError,
+    onClose: onCloseSubmitError,
+  } = useDisclosure();
 
   useEffect(() => {
     if (user == null) router.push("/login");
@@ -44,7 +60,8 @@ export default function StockBarang() {
       newStockItem.qty === "" ||
       newStockItem.harga_modal === "" ||
       newStockItem.harga_jual === "" ||
-      newStockItem.nama_stock === ""
+      newStockItem.nama_stock === "" ||
+      parseInt(newStockItem.harga_jual) < parseInt(newStockItem.harga_modal)
     ) {
       setInvalid(true);
     } else {
@@ -105,11 +122,11 @@ export default function StockBarang() {
         harga_modal: "",
         harga_jual: "",
       });
-
-      window.location.reload();
+      setSuccessMsg("Data berhasil tersimpan!");
+      onOpenSubmitSuccess();
     } else {
-      console.log("data gagal masuk " + newStocksData);
-      return;
+      setErrorMsg("Data gagal tersimpan");
+      onOpenSubmitError();
     }
   };
 
@@ -132,10 +149,11 @@ export default function StockBarang() {
     });
 
     if (updateStocksData.status === 204) {
-      window.location.reload();
+      setSuccessMsg("Data berhasil diperbarui!");
+      onOpenSubmitSuccess();
     } else {
-      console.log("data gagal update " + updateStocksData);
-      return;
+      setErrorMsg("Data gagal diperbarui");
+      onOpenSubmitError();
     }
   };
 
@@ -145,101 +163,118 @@ export default function StockBarang() {
       params: id,
     });
     if (deleteStocksData.status === 204) {
-      window.location.reload();
+      setSuccessMsg("Data berhasil terhapus!");
+      onOpenSubmitSuccess();
     } else {
-      console.log("data gagal terhapus " + deleteStocksData);
-      return;
+      setErrorMsg("Data gagal terhapus");
+      onOpenSubmitError();
     }
   };
 
   return (
-    <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
-      <Box>
-        <Heading>Stock Barang</Heading>
-        <Card p={4} mt={"12px"}>
-          <Tabs variant="enclosed">
-            <TabList>
-              <Tab>Cari</Tab>
-              <Tab>Buat Stock</Tab>
-            </TabList>
+    <>
+      <AlertSuccessSubmit
+        isOpen={isOpenSubmitSuccess}
+        onOpen={onOpenSubmitSuccess}
+        onCloseHandler={onCloseSubmitSuccess}
+      >
+        {successMsg}
+      </AlertSuccessSubmit>
+      <AlertErrorSubmit
+        isOpen={isOpenSubmitError}
+        onOpen={onOpenSubmitError}
+        onCloseHandler={onCloseSubmitError}
+      >
+        {errorMsg}
+      </AlertErrorSubmit>
+      <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
+        <Box>
+          <Heading>Stock Barang</Heading>
+          <Card p={4} mt={"12px"}>
+            <Tabs variant="enclosed">
+              <TabList>
+                <Tab>Cari</Tab>
+                <Tab>Buat Stock</Tab>
+              </TabList>
 
-            <TabPanels>
-              <TabPanel>
-                <Input
-                  maxW={"400px"}
-                  bg={"white"}
-                  placeholder="nama stock"
-                  onChange={(e) => setSearchStockName(e.target.value)}
-                />
-              </TabPanel>
-              <TabPanel>
-                <SimpleGrid columns={5} spacing={2}>
+              <TabPanels>
+                <TabPanel>
                   <Input
+                    maxW={"400px"}
                     bg={"white"}
-                    name={"nama_stock"}
-                    value={newStockItem.nama_stock}
                     placeholder="nama stock"
-                    onChange={changeInputHandler}
+                    onChange={(e) => setSearchStockName(e.target.value)}
                   />
-                  <Input
-                    bg={"white"}
-                    name={"harga_modal"}
-                    value={newStockItem.harga_modal}
-                    placeholder="harga modal"
-                    onChange={changeInputHandler}
-                  />
-                  <Input
-                    bg={"white"}
-                    name={"harga_jual"}
-                    value={newStockItem.harga_jual}
-                    placeholder="harga jual"
-                    onChange={changeInputHandler}
-                  />
-                  <Input
-                    bg={"white"}
-                    name={"qty"}
-                    value={newStockItem.qty}
-                    placeholder="jumlah stock"
-                    onChange={changeInputHandler}
-                  />
-                  <Button
-                    onClick={simpanHandler}
-                    colorScheme="green"
-                    isDisabled={invalid}
-                  >
-                    Simpan
-                  </Button>
-                </SimpleGrid>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Card>
+                </TabPanel>
+                <TabPanel>
+                  <SimpleGrid columns={5} spacing={2}>
+                    <Input
+                      bg={"white"}
+                      name={"nama_stock"}
+                      value={newStockItem.nama_stock}
+                      placeholder="nama stock"
+                      onChange={changeInputHandler}
+                    />
+                    <Input
+                      bg={"white"}
+                      name={"harga_modal"}
+                      value={newStockItem.harga_modal}
+                      placeholder="harga modal"
+                      onChange={changeInputHandler}
+                    />
+                    <Input
+                      bg={"white"}
+                      name={"harga_jual"}
+                      value={newStockItem.harga_jual}
+                      placeholder="harga jual"
+                      onChange={changeInputHandler}
+                    />
+                    <Input
+                      bg={"white"}
+                      name={"qty"}
+                      value={newStockItem.qty}
+                      placeholder="jumlah stock"
+                      onChange={changeInputHandler}
+                    />
+                    <Button
+                      onClick={simpanHandler}
+                      colorScheme="green"
+                      isDisabled={invalid}
+                    >
+                      Simpan
+                    </Button>
+                  </SimpleGrid>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </Card>
 
-        {filteredItems !== undefined && (
-          <VStack
-            mt={"12px"}
-            spacing={8}
-            overflowY={"scroll"}
-            alignItems={"unset"}
-            maxH={"68vh"}
-            pb={4}
-          >
-            {filteredItems.map((item) => (
-              <CardStock
-                key={item.id}
-                id={item.id}
-                qty={item.quantity}
-                namaStock={item.stockName}
-                hargaModal={item.equityPrice}
-                hargaJual={item.sellingPrice}
-                date={item.date}
-                onUpdateHandler={updateHandler}
-                onDeleteHandler={deleteHandler}
-              />
-            ))}
-          </VStack>
-        )}
-      </Box>
-    </SidebarContainer>
+          {filteredItems !== undefined && (
+            <VStack
+              mt={"12px"}
+              spacing={8}
+              overflowY={"scroll"}
+              alignItems={"unset"}
+              maxH={"68vh"}
+              pb={4}
+            >
+              {filteredItems.map((item) => (
+                <CardStock
+                  key={item.id}
+                  id={item.id}
+                  qty={item.quantity}
+                  namaStock={item.stockName}
+                  hargaModal={item.equityPrice}
+                  hargaJual={item.sellingPrice}
+                  date={item.date}
+                  onUpdateHandler={updateHandler}
+                  onDeleteHandler={deleteHandler}
+                />
+              ))}
+            </VStack>
+          )}
+        </Box>
+      </SidebarContainer>
+    </>
   );
 }
