@@ -5,7 +5,7 @@ import {
   Input,
   Select,
   Icon,
-  VisuallyHidden,
+  Spinner,
 } from "@chakra-ui/react";
 import { FaMinusCircle } from "react-icons/fa";
 import { useState, useEffect } from "react";
@@ -20,8 +20,10 @@ export default function FormStock({
   listStockId,
 }) {
   const [stocks, setStocks] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     async function getStocksHandler() {
+      setIsLoading(true);
       const stocksData = await stocksQuery({
         method: "GET",
       });
@@ -39,6 +41,7 @@ export default function FormStock({
           setStocks(filteredStocks);
         }
       }
+      setIsLoading(false);
     }
     getStocksHandler();
   }, []);
@@ -53,25 +56,36 @@ export default function FormStock({
 
   return (
     <HStack mt={2}>
-      <FormControl>
-        <FormLabel>Pilih Stock</FormLabel>
-        {stocks !== undefined && (
-          <Select
-            name="StockId"
-            borderColor={"gray.300"}
-            w={400}
-            value={StockId}
-            onChange={changeHandlerForm}
-            placeholder={"pilih stock"}
-          >
-            {stocks.map((stock) => (
-              <option key={stock.id} value={stock.id}>
-                {stock.stockName} | qty: {stock.quantity}{" "}
-              </option>
-            ))}
-          </Select>
-        )}
-      </FormControl>
+      {isLoading ? (
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+        />
+      ) : (
+        <FormControl>
+          <FormLabel>Pilih Stock</FormLabel>
+          {stocks !== undefined && (
+            <Select
+              name="StockId"
+              borderColor={"gray.300"}
+              w={400}
+              value={StockId}
+              onChange={changeHandlerForm}
+              placeholder={"pilih stock"}
+            >
+              {stocks.map((stock) => (
+                <option key={stock.id} value={stock.id}>
+                  {stock.stockName} | qty: {stock.quantity}{" "}
+                </option>
+              ))}
+            </Select>
+          )}
+        </FormControl>
+      )}
+
       <FormControl>
         <FormLabel>Quantity</FormLabel>
         <HStack>

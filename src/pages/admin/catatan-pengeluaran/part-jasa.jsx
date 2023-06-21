@@ -14,7 +14,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DUMMY_PARTJASA } from "@/constant/DummyData";
 import TablePartJasa from "@/component/admin/part-jasa/TablePartJasa";
 import { useRouter } from "next/router";

@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { FirebaseApp } from "@/config";
+import Loading from "@/component/Loading";
 
 const auth = getAuth(FirebaseApp);
 
@@ -53,8 +54,6 @@ export const AuthContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user }}>
-      {loading ? <div>Loading...</div> : children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
   );
 };

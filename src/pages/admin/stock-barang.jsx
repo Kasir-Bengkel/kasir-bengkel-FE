@@ -21,12 +21,14 @@ import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
 import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
 import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
+import Loading from "@/component/Loading";
 
 export default function StockBarang() {
   const { user } = useAuthContext();
   const router = useRouter();
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     isOpen: isOpenSubmitSuccess,
@@ -71,6 +73,7 @@ export default function StockBarang() {
 
   useEffect(() => {
     async function getStocksHandler() {
+      setIsLoading(true);
       const stocksData = await stocksQuery({
         method: "GET",
       });
@@ -79,6 +82,7 @@ export default function StockBarang() {
         const filteredItems = items.filter((item) => item.types === "STOCK");
         setStock(filteredItems);
       }
+      setIsLoading(false);
     }
     getStocksHandler();
   }, []);
@@ -99,6 +103,7 @@ export default function StockBarang() {
 
   const simpanHandler = async () => {
     const today = new Date();
+    setIsLoading(true);
     const newStocksData = await stocksQuery({
       method: "POST",
       headers: {
@@ -113,7 +118,7 @@ export default function StockBarang() {
         Types: 1,
       },
     });
-
+    setIsLoading(false);
     if (newStocksData.status === 200) {
       setNewStockItem({
         id: "",
@@ -131,6 +136,7 @@ export default function StockBarang() {
   };
 
   const updateHandler = async (updatedData) => {
+    setIsLoading(true);
     const updateStocksData = await stocksQuery({
       method: "PUT",
       params: updatedData.id,
@@ -147,7 +153,7 @@ export default function StockBarang() {
         Types: 1,
       },
     });
-
+    setIsLoading(false);
     if (updateStocksData.status === 204) {
       setSuccessMsg("Data berhasil diperbarui!");
       onOpenSubmitSuccess();
@@ -158,10 +164,12 @@ export default function StockBarang() {
   };
 
   const deleteHandler = async (id) => {
+    setIsLoading(true);
     const deleteStocksData = await stocksQuery({
       method: "DELETE",
       params: id,
     });
+    setIsLoading(false);
     if (deleteStocksData.status === 204) {
       setSuccessMsg("Data berhasil terhapus!");
       onOpenSubmitSuccess();
@@ -173,6 +181,7 @@ export default function StockBarang() {
 
   return (
     <>
+      {isLoading && <Loading />}
       <AlertSuccessSubmit
         isOpen={isOpenSubmitSuccess}
         onOpen={onOpenSubmitSuccess}

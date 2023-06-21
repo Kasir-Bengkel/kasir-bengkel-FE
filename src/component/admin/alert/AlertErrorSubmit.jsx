@@ -27,7 +27,7 @@ export default function AlertErrorSubmit({
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Error Pesanan
+            Error Message
           </AlertDialogHeader>
 
           <AlertDialogBody>{children}</AlertDialogBody>

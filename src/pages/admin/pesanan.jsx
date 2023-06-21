@@ -31,6 +31,8 @@ import stocksBulkQuery from "../api/stocksbulk-query";
 import { formatMoney } from "@/helper/FormatMoney";
 import AlertSubmit from "@/component/admin/alert/AlertSubmit";
 import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
+import Loading from "@/component/Loading";
+import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
 
 export default function Pesanan() {
   const [fieldsStock, setFieldsStock] = useState([]);
@@ -50,6 +52,7 @@ export default function Pesanan() {
     SalesOrderDetails: [],
   });
 
+  const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
   const [invalidPrice, setInvalidPrice] = useState(true);
   const [invalidDetail, setInvalidDetail] = useState(true);
@@ -57,6 +60,7 @@ export default function Pesanan() {
   const [errorMsg, setErrorMsg] = useState("");
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [isFieldChange, setIsFieldChange] = useState(true);
+  const [successMsg, setSuccessMsg] = useState("");
 
   const {
     isOpen: isOpenSubmit,
@@ -67,6 +71,11 @@ export default function Pesanan() {
     isOpen: isOpenError,
     onOpen: onOpenError,
     onClose: onCloseError,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenSubmitSuccess,
+    onOpen: onOpenSubmitSuccess,
+    onClose: onCloseSubmitSuccess,
   } = useDisclosure();
 
   const addFieldStock = () => {
@@ -261,8 +270,6 @@ export default function Pesanan() {
         body: fieldsPartJasa,
       });
 
-      console.log(newStocksBulk);
-
       for (let i = 0; i < newStocksBulk.data.stocksId.length; i++) {
         const getStocksQty = await stockQuery({
           method: "GET",
@@ -294,6 +301,7 @@ export default function Pesanan() {
       mergedStocksPartJasa = arrNewPartJasa.concat(arrNewStocks);
     }
 
+    setIsLoading(true);
     const newSalesOrder = await salesOrderQuery({
       method: "POST",
       headers: {
@@ -301,240 +309,254 @@ export default function Pesanan() {
       },
       body: { fieldSalesOrder, totalDiscount, mergedStocksPartJasa },
     });
+    setIsLoading(false);
 
     if (newSalesOrder.status === 200) {
-      console.log(newSalesOrder);
+      setSuccessMsg("Data berhasil tersimpan!");
+      onOpenSubmitSuccess();
     } else {
-      console.log("data gagal masuk " + newSalesOrder);
+      setErrorMsg("Data gagal tersimpan");
+      onOpenError();
       return;
     }
   };
 
   return (
-    <SidebarContainer onSidebarWidth={sidebarWidthHandler}>
-      <AlertSubmit
-        isOpen={isOpenSubmit}
-        onClose={onCloseSubmit}
-        onAcceptHandler={submitHandler}
-        onCancelHandler={onCloseSubmit}
-      />
-      <AlertErrorSubmit
-        isOpen={isOpenError}
-        onClose={onCloseError}
-        onCloseHandler={onCloseError}
-      >
-        {errorMsg}
-      </AlertErrorSubmit>
-      <Flex gap={4}>
-        <Card p={4} w={"30%"}>
-          <VStack>
-            <FormControl>
-              <FormLabel>Nama Mekanik</FormLabel>
-              <Input
-                borderColor={"gray.300"}
-                type={"text"}
-                placeholder={"John Doe"}
-                name="MechanicsName"
-                value={fieldSalesOrder.MechanicsName}
-                onChange={formSalesChangeHandler}
-              />
-              {!isError ? (
-                <FormHelperText>
-                  Enter the email you&apos;d like to receive the newsletter on.
-                </FormHelperText>
-              ) : (
-                <FormErrorMessage>Email is required.</FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl>
-              <FormLabel>Plat Nomor(tanpa spasi)</FormLabel>
-              <Input
-                borderColor={"gray.300"}
-                type={"text"}
-                placeholder={"B12AY"}
-                name="LicensePlate"
-                value={fieldSalesOrder.LicensePlate}
-                onChange={formSalesChangeHandler}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Nama Kendaraan(Merk + Tipe + Tahun)</FormLabel>
-              <Input
-                borderColor={"gray.300"}
-                type={"text"}
-                placeholder={"Honda Civic 2016"}
-                name="VehicleName"
-                value={fieldSalesOrder.VehicleName}
-                onChange={formSalesChangeHandler}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Tanggal Invoice</FormLabel>
-              <Input
-                borderColor={"gray.300"}
-                type={"datetime-local"}
-                name="InvoiceDate"
-                value={fieldSalesOrder.InvoiceDate}
-                onChange={formSalesChangeHandler}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>No. Hp</FormLabel>
-              <InputGroup>
-                <InputLeftAddon>{"+62"}</InputLeftAddon>
+    <>
+      {isLoading && <Loading />}
+      <SidebarContainer onSidebarWidth={sidebarWidthHandler}>
+        <AlertSubmit
+          isOpen={isOpenSubmit}
+          onClose={onCloseSubmit}
+          onAcceptHandler={submitHandler}
+          onCancelHandler={onCloseSubmit}
+        />
+        <AlertErrorSubmit
+          isOpen={isOpenError}
+          onClose={onCloseError}
+          onCloseHandler={onCloseError}
+        >
+          {errorMsg}
+        </AlertErrorSubmit>
+        <AlertSuccessSubmit
+          isOpen={isOpenSubmitSuccess}
+          onOpen={onOpenSubmitSuccess}
+          onCloseHandler={onCloseSubmitSuccess}
+        >
+          {successMsg}
+        </AlertSuccessSubmit>
+        <Flex gap={4}>
+          <Card p={4} w={"30%"}>
+            <VStack>
+              <FormControl>
+                <FormLabel>Nama Mekanik</FormLabel>
                 <Input
                   borderColor={"gray.300"}
                   type={"text"}
-                  name="PhoneNumber"
-                  value={fieldSalesOrder.PhoneNumber}
+                  placeholder={"John Doe"}
+                  name="MechanicsName"
+                  value={fieldSalesOrder.MechanicsName}
                   onChange={formSalesChangeHandler}
                 />
-              </InputGroup>
-            </FormControl>
-            <FormControl>
-              <FormLabel>Nama Pelanggan</FormLabel>
-              <Input
-                borderColor={"gray.300"}
-                type={"text"}
-                placeholder={"Ahmad Jabulani"}
-                name="CustomerName"
-                value={fieldSalesOrder.CustomerName}
-                onChange={formSalesChangeHandler}
-              />
-            </FormControl>
-          </VStack>
-        </Card>
-        <VStack alignItems={"flex-start"} w={"100%"}>
-          <Card
-            w={"70%"}
-            p={4}
-            minH={"40vh"}
-            maxH={"40vh"}
-            overflowY={"scroll"}
-          >
-            <Heading size={"sm"}>Pilih Stock</Heading>
-            {fieldsStock.map((field, index) => (
-              <FormStock
-                key={index}
-                StockId={field.StockId}
-                Quantity={field.Quantity}
-                index={index}
-                EquityPrice={field.EquityPrice}
-                SellingPrice={field.SellingPrice}
-                onRemoveForm={removeHandlerFormStock}
-                onChangeForm={changeHandlerFormStock}
-                listStockId={stockIdList}
-              />
-            ))}
-            <Center>
-              <Button
-                leftIcon={<Icon as={FaPlus} />}
-                colorScheme="teal"
-                mt={2}
-                size={"md"}
-                onClick={addFieldStock}
-              >
-                Add Field
-              </Button>
-            </Center>
-          </Card>
-          <Card
-            p={4}
-            overflowY={"scroll"}
-            w={"100%"}
-            minH={"40vh"}
-            maxH={"40vh"}
-          >
-            <Heading size={"sm"}>Pilih Part/Jasa</Heading>
-            {fieldsPartJasa.map((field, index) => (
-              <FormPartJasa
-                key={index}
-                ItemName={field.ItemName}
-                EquityPrice={field.EquityPrice}
-                SellingPrice={field.SellingPrice}
-                Quantity={field.Quantity}
-                Date={field.Date}
-                Types={field.Types}
-                index={index}
-                onRemoveForm={removeHandlerFormPartJasa}
-                onChangeForm={changeHandlerFormPartJasa}
-              />
-            ))}
-
-            <Center>
-              <Button
-                leftIcon={<Icon as={FaPlus} />}
-                colorScheme="teal"
-                mt={2}
-                size={"md"}
-                onClick={addFieldPartJasa}
-              >
-                Add Field
-              </Button>
-            </Center>
-          </Card>
-        </VStack>
-      </Flex>
-      {windowsWidth !== undefined && (
-        <Box
-          w={windowsWidth - sidebarWidth}
-          h={"80px"}
-          bg={"white"}
-          position={"fixed"}
-          bottom={0}
-          right={0}
-          borderTop={"1px"}
-          borderColor={"gray.200"}
-          py={2}
-          px={8}
-        >
-          <Flex justifyContent={"space-between"}>
-            <VStack alignItems={"flex-start"}>
-              <Heading size={"sm"}>Total Pembayaran: </Heading>
-              <Text>{formatMoney(totalPrice)}</Text>
-            </VStack>
-            <HStack>
-              <Select
-                borderColor={"gray.300"}
-                placeholder={"tipe pembayaran"}
-                onChange={paymentTypeHandler}
-              >
-                <option value={"cash"}>Cash</option>
-                <option value={"debit"}>Debit</option>
-                <option value={"transfer"}>Transfer</option>
-                <option value={"cashtrasnfer"}>Cash + Transfer</option>
-              </Select>
-              <InputGroup>
-                <InputLeftAddon>{"Rp"}</InputLeftAddon>
+                {!isError ? (
+                  <FormHelperText>
+                    Enter the email you&apos;d like to receive the newsletter
+                    on.
+                  </FormHelperText>
+                ) : (
+                  <FormErrorMessage>Email is required.</FormErrorMessage>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel>Plat Nomor(tanpa spasi)</FormLabel>
                 <Input
-                  type={"number"}
-                  placeholder="diskon"
-                  onChange={(e) => setTotalDiscount(parseInt(e.target.value))}
+                  borderColor={"gray.300"}
+                  type={"text"}
+                  placeholder={"B12AY"}
+                  name="LicensePlate"
+                  value={fieldSalesOrder.LicensePlate}
+                  onChange={formSalesChangeHandler}
                 />
-              </InputGroup>
-              {isFieldChange ? (
+              </FormControl>
+              <FormControl>
+                <FormLabel>Nama Kendaraan(Merk + Tipe + Tahun)</FormLabel>
+                <Input
+                  borderColor={"gray.300"}
+                  type={"text"}
+                  placeholder={"Honda Civic 2016"}
+                  name="VehicleName"
+                  value={fieldSalesOrder.VehicleName}
+                  onChange={formSalesChangeHandler}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Tanggal Invoice</FormLabel>
+                <Input
+                  borderColor={"gray.300"}
+                  type={"datetime-local"}
+                  name="InvoiceDate"
+                  value={fieldSalesOrder.InvoiceDate}
+                  onChange={formSalesChangeHandler}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>No. Hp</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon>{"+62"}</InputLeftAddon>
+                  <Input
+                    borderColor={"gray.300"}
+                    type={"text"}
+                    name="PhoneNumber"
+                    value={fieldSalesOrder.PhoneNumber}
+                    onChange={formSalesChangeHandler}
+                  />
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Nama Pelanggan</FormLabel>
+                <Input
+                  borderColor={"gray.300"}
+                  type={"text"}
+                  placeholder={"Ahmad Jabulani"}
+                  name="CustomerName"
+                  value={fieldSalesOrder.CustomerName}
+                  onChange={formSalesChangeHandler}
+                />
+              </FormControl>
+            </VStack>
+          </Card>
+          <VStack alignItems={"flex-start"} w={"100%"}>
+            <Card
+              w={"70%"}
+              p={4}
+              minH={"40vh"}
+              maxH={"40vh"}
+              overflowY={"scroll"}
+            >
+              <Heading size={"sm"}>Pilih Stock</Heading>
+              {fieldsStock.map((field, index) => (
+                <FormStock
+                  key={index}
+                  StockId={field.StockId}
+                  Quantity={field.Quantity}
+                  index={index}
+                  EquityPrice={field.EquityPrice}
+                  SellingPrice={field.SellingPrice}
+                  onRemoveForm={removeHandlerFormStock}
+                  onChangeForm={changeHandlerFormStock}
+                  listStockId={stockIdList}
+                />
+              ))}
+              <Center>
                 <Button
-                  px={8}
-                  colorScheme={"blue"}
-                  onClick={checkPrizeHandler}
-                  isDisabled={invalidPrice}
+                  leftIcon={<Icon as={FaPlus} />}
+                  colorScheme="teal"
+                  mt={2}
+                  size={"md"}
+                  onClick={addFieldStock}
                 >
-                  Cek Harga
+                  Add Field
                 </Button>
-              ) : (
+              </Center>
+            </Card>
+            <Card
+              p={4}
+              overflowY={"scroll"}
+              w={"100%"}
+              minH={"40vh"}
+              maxH={"40vh"}
+            >
+              <Heading size={"sm"}>Pilih Part/Jasa</Heading>
+              {fieldsPartJasa.map((field, index) => (
+                <FormPartJasa
+                  key={index}
+                  ItemName={field.ItemName}
+                  EquityPrice={field.EquityPrice}
+                  SellingPrice={field.SellingPrice}
+                  Quantity={field.Quantity}
+                  Date={field.Date}
+                  Types={field.Types}
+                  index={index}
+                  onRemoveForm={removeHandlerFormPartJasa}
+                  onChangeForm={changeHandlerFormPartJasa}
+                />
+              ))}
+
+              <Center>
                 <Button
-                  px={8}
-                  colorScheme={"blue"}
-                  onClick={onOpenSubmit}
-                  isDisabled={invalidDetail}
+                  leftIcon={<Icon as={FaPlus} />}
+                  colorScheme="teal"
+                  mt={2}
+                  size={"md"}
+                  onClick={addFieldPartJasa}
                 >
-                  Submit
+                  Add Field
                 </Button>
-              )}
-            </HStack>
-          </Flex>
-        </Box>
-      )}
-    </SidebarContainer>
+              </Center>
+            </Card>
+          </VStack>
+        </Flex>
+        {windowsWidth !== undefined && (
+          <Box
+            w={windowsWidth - sidebarWidth}
+            h={"80px"}
+            bg={"white"}
+            position={"fixed"}
+            bottom={0}
+            right={0}
+            borderTop={"1px"}
+            borderColor={"gray.200"}
+            py={2}
+            px={8}
+          >
+            <Flex justifyContent={"space-between"}>
+              <VStack alignItems={"flex-start"}>
+                <Heading size={"sm"}>Total Pembayaran: </Heading>
+                <Text>{formatMoney(totalPrice)}</Text>
+              </VStack>
+              <HStack>
+                <Select
+                  borderColor={"gray.300"}
+                  placeholder={"tipe pembayaran"}
+                  onChange={paymentTypeHandler}
+                >
+                  <option value={"cash"}>Cash</option>
+                  <option value={"debit"}>Debit</option>
+                  <option value={"transfer"}>Transfer</option>
+                  <option value={"cashtrasnfer"}>Cash + Transfer</option>
+                </Select>
+                <InputGroup>
+                  <InputLeftAddon>{"Rp"}</InputLeftAddon>
+                  <Input
+                    type={"number"}
+                    placeholder="diskon"
+                    onChange={(e) => setTotalDiscount(parseInt(e.target.value))}
+                  />
+                </InputGroup>
+                {isFieldChange ? (
+                  <Button
+                    px={8}
+                    colorScheme={"blue"}
+                    onClick={checkPrizeHandler}
+                    isDisabled={invalidPrice}
+                  >
+                    Cek Harga
+                  </Button>
+                ) : (
+                  <Button
+                    px={8}
+                    colorScheme={"blue"}
+                    onClick={onOpenSubmit}
+                    isDisabled={invalidDetail}
+                  >
+                    Submit
+                  </Button>
+                )}
+              </HStack>
+            </Flex>
+          </Box>
+        )}
+      </SidebarContainer>
+    </>
   );
 }

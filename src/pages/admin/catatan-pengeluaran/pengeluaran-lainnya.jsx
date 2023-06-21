@@ -29,10 +29,12 @@ import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
 import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
 import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
+import Loading from "@/component/Loading";
 
 export default function PengeluaranLainnya() {
   const { user } = useAuthContext();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     isOpen: isOpenSubmitSuccess,
@@ -78,6 +80,7 @@ export default function PengeluaranLainnya() {
 
   useEffect(() => {
     async function getExpensesHandler() {
+      setIsLoading(true);
       const expensesData = await expensesQuery({
         method: "GET",
         params: {
@@ -88,6 +91,7 @@ export default function PengeluaranLainnya() {
         const { items } = expensesData.data;
         setPengeluaranLainnya(items);
       }
+      setIsLoading(false);
     }
     getExpensesHandler();
   }, []);
@@ -112,6 +116,7 @@ export default function PengeluaranLainnya() {
   };
 
   const submitHandler = async () => {
+    setIsLoading(true);
     const newExpensesData = await expensesQuery({
       method: "POST",
       headers: {
@@ -124,7 +129,7 @@ export default function PengeluaranLainnya() {
         Types: 2,
       },
     });
-
+    setIsLoading(false);
     if (newExpensesData.status === 200) {
       setNewPengeluaranLainnya({
         id: "",
@@ -142,6 +147,7 @@ export default function PengeluaranLainnya() {
   };
 
   const updateHandler = async (updatedData) => {
+    setIsLoading(true);
     const updateExpensesData = await expensesQuery({
       method: "PUT",
       params: {
@@ -158,6 +164,7 @@ export default function PengeluaranLainnya() {
         Types: 2,
       },
     });
+    setIsLoading(false);
     if (updateExpensesData.status === 204) {
       setSuccessMsg("Data berhasil diperbarui!");
       onOpenSubmitSuccess();
@@ -168,12 +175,14 @@ export default function PengeluaranLainnya() {
   };
 
   const deleteHandler = async (id) => {
+    setIsLoading(true);
     const deleteExpensesData = await expensesQuery({
       method: "DELETE",
       params: {
         id,
       },
     });
+    setIsLoading(false);
     if (deleteExpensesData.status === 204) {
       setSuccessMsg("Data berhasil dihapus!");
       onOpenSubmitSuccess();
@@ -185,6 +194,7 @@ export default function PengeluaranLainnya() {
 
   return (
     <>
+      {isLoading && <Loading />}
       <AlertSuccessSubmit
         isOpen={isOpenSubmitSuccess}
         onOpen={onOpenSubmitSuccess}
