@@ -5,6 +5,7 @@ import ReportTable from "@/component/admin/report/ReportTable";
 import { Heading, Flex, Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
+import { useEffect } from "react";
 
 export default function ReportTest() {
   const { user } = useAuthContext();
