@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AuthContextProvider } from "@/context/AuthContext";
+import { RoleContextProvider } from "@/context/RoleContext";
 import NextNProgress from "nextjs-progressbar";
 
 function App({ Component, pageProps }) {
@@ -9,7 +10,9 @@ function App({ Component, pageProps }) {
       <NextNProgress />
       <ChakraProvider>
         <AuthContextProvider>
-          <Component {...pageProps} />
+          <RoleContextProvider>
+            <Component {...pageProps} />
+          </RoleContextProvider>
         </AuthContextProvider>
       </ChakraProvider>
     </>

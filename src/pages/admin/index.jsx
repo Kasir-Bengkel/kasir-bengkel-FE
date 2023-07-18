@@ -18,13 +18,16 @@ import { monthNames } from "@/constant/MonthName";
 
 import { FcFeedIn, FcInTransit, FcRules } from "react-icons/fc";
 import { useAuthContext } from "@/context/AuthContext";
+import { useRoleContext } from "@/context/RoleContext";
 
 export default function AdminTest() {
   const { user } = useAuthContext();
+  const { role } = useRoleContext();
   const router = useRouter();
 
   useEffect(() => {
     if (user == null) router.push("/login");
+    console.log("di index: " + role);
   }, [user, router]);
 
   const [dateInput, setDateInput] = useState({ day: "", month: "", year: "" });
