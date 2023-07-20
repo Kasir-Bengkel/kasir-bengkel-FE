@@ -19,8 +19,13 @@ import { useRouter } from "next/router";
 import NextLink from "next/link";
 import Loading from "@/component/Loading";
 import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/config";
+import { useRoleContext } from "@/context/RoleContext";
 
 export default function Login() {
+  const { updateRole } = useRoleContext();
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -45,6 +50,15 @@ export default function Login() {
   const signInHandler = async () => {
     setIsLoading(true);
     const { result, error } = await signIn(user.email, user.password);
+
+    const q = query(collection(db, "user"), where("id", "==", result.user.uid));
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+      updateRole(doc.data().role);
+    });
+
     setIsLoading(false);
 
     if (error) {
@@ -52,7 +66,6 @@ export default function Login() {
       onOpenSubmitError();
       return;
     }
-
     router.push("/admin");
   };
 
