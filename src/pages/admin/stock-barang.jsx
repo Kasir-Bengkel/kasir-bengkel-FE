@@ -42,6 +42,7 @@ export default function StockBarang() {
   } = useDisclosure();
 
   useEffect(() => {
+    // console.log(user);
     if (user == null) router.push("/login");
   }, [user, router]);
 

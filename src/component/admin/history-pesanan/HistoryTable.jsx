@@ -6,34 +6,70 @@ import {
   Box,
   Center,
   Badge,
+  Link,
 } from "@chakra-ui/react";
 
 import { FcDocument } from "react-icons/fc";
 import { useRouter } from "next/router";
 import { formatDateTime } from "@/helper/FormatDateTime";
+import { useState, useEffect } from "react";
+import { formatMoney } from "@/helper/FormatMoney";
+import salesOrderQuery from "@/pages/api/salesorder-query";
+import { useSalesOrderContext } from "@/context/SalesOrderContext";
 
 export default function HistoryTable({
+  id,
   invoice,
   waktuOrder,
   namaKendaraan,
   namaPemilik,
   metodePembayaran,
-  totalModal,
-  totalPendapatan,
+  salesOrderDetail,
   platNomor,
-  statusInvoice,
 }) {
   const router = useRouter();
 
-  let badgeStatus;
+  // let badgeStatus;
 
-  if (statusInvoice === "lunas") {
-    badgeStatus = <Badge colorScheme="green">Lunas</Badge>;
-  } else if (statusInvoice === "pending") {
-    badgeStatus = <Badge colorScheme="red">Pending</Badge>;
-  } else if (statusInvoice === "hutang") {
-    badgeStatus = <Badge colorScheme="yellow">Hutang</Badge>;
-  }
+  // if (statusInvoice === "lunas") {
+  //   badgeStatus = <Badge colorScheme="green">Lunas</Badge>;
+  // } else if (statusInvoice === "pending") {
+  //   badgeStatus = <Badge colorScheme="red">Pending</Badge>;
+  // } else if (statusInvoice === "hutang") {
+  //   badgeStatus = <Badge colorScheme="yellow">Hutang</Badge>;
+  // }
+
+  const [equityTotal, setEquityTotal] = useState(0);
+  const [sellingTotal, setSellingTotal] = useState(0);
+
+  const { setSalesOrder } = useSalesOrderContext();
+
+  useEffect(() => {
+    const accEquity = salesOrderDetail.reduce((accumulator, currentValue) => {
+      const { equityPrice, quantity } = currentValue;
+      const equity = equityPrice * quantity;
+      return accumulator + equity;
+    }, 0);
+    setEquityTotal(accEquity);
+
+    const accSelling = salesOrderDetail.reduce((accumulator, currentValue) => {
+      const { sellingPrice, quantity } = currentValue;
+      const selling = sellingPrice * quantity;
+      return accumulator + selling;
+    }, 0);
+    setSellingTotal(accSelling);
+  }, [salesOrderDetail]);
+
+  const invoiceDetailHandler = async () => {
+    const salesOrderData = await salesOrderQuery({
+      method: "GET",
+      params: {
+        id,
+      },
+    });
+    setSalesOrder(salesOrderData.data);
+    router.push("/admin/invoice", undefined, { shallow: true, as: "/invoice" });
+  };
 
   return (
     <Box
@@ -57,15 +93,10 @@ export default function HistoryTable({
           <Flex flexDirection={"column"}>
             <HStack>
               <Heading size={"sm"}>No. Invoice</Heading>
-              {badgeStatus}
             </HStack>
-            <Text
-              onClick={() => {
-                router.push("/admin/invoice");
-              }}
-            >
+            <Link color="blue.400" onClick={invoiceDetailHandler}>
               {invoice}
-            </Text>
+            </Link>
           </Flex>
         </HStack>
       </Flex>
@@ -96,13 +127,13 @@ export default function HistoryTable({
       <Box bg={"red.500"}>
         <Flex px={4} py={2} justifyContent={"space-between"}>
           <Text color={"white"}>Total Modal</Text>
-          <Text color={"white"}>{totalModal}</Text>
+          <Text color={"white"}>{formatMoney(equityTotal)}</Text>
         </Flex>
       </Box>
       <Box bg={"green.500"}>
         <Flex px={4} py={2} justifyContent={"space-between"}>
           <Text color={"white"}>Total Pendapatan</Text>
-          <Text color={"white"}>{totalPendapatan}</Text>
+          <Text color={"white"}>{formatMoney(sellingTotal)}</Text>
         </Flex>
       </Box>
       <Box>

@@ -27,7 +27,6 @@ export default function AdminTest() {
 
   useEffect(() => {
     if (user == null) router.push("/login");
-    console.log("di index: " + role);
   }, [user, router]);
 
   const [dateInput, setDateInput] = useState({ day: "", month: "", year: "" });

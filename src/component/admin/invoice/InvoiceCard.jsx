@@ -6,10 +6,13 @@ import {
   Text,
   Flex,
   CardBody,
-  Center,
+  Box,
 } from "@chakra-ui/react";
 
-export default function InvoiceCard({ nomor, mekanik }) {
+import InvoiceCardDetailItem from "./InvoiceCardDetailItem";
+import { formatMoney } from "@/helper/FormatMoney";
+
+export default function InvoiceCard({ invoiceDetail }) {
   return (
     <CardBody>
       <Flex justifyContent={"space-between"}>
@@ -32,15 +35,15 @@ export default function InvoiceCard({ nomor, mekanik }) {
         <VStack mt={4} alignItems={"flex-start"}>
           <HStack>
             <Text fontWeight={700}>No. Tagihan</Text>
-            <Text>{nomor}</Text>
+            <Text>{invoiceDetail.invoiceNumber}</Text>
           </HStack>
           <HStack>
             <Text fontWeight={700}>Waktu</Text>
-            <Text>30 Maret 2023, 16:32:13</Text>
+            <Text>{invoiceDetail.invoiceDate}</Text>
           </HStack>
           <HStack>
             <Text fontWeight={700}>Mekanik</Text>
-            <Text>{mekanik}</Text>
+            <Text>{invoiceDetail.mechanicsName}</Text>
           </HStack>
         </VStack>
       </Flex>
@@ -48,15 +51,15 @@ export default function InvoiceCard({ nomor, mekanik }) {
         <VStack mt={4} alignItems={"flex-start"}>
           <HStack>
             <Text fontWeight={700}>Nama Pelanggan</Text>
-            <Text>Gifino</Text>
+            <Text>{invoiceDetail.customerName}</Text>
           </HStack>
           <HStack>
             <Text fontWeight={700}>Nama Kendaraan</Text>
-            <Text>Mirage</Text>
+            <Text>{invoiceDetail.vehicleName}</Text>
           </HStack>
           <HStack>
             <Text fontWeight={700}>Plat Nomor</Text>
-            <Text>B1698KZK</Text>
+            <Text>{invoiceDetail.licensePlate}</Text>
           </HStack>
         </VStack>
       </Flex>
@@ -64,7 +67,7 @@ export default function InvoiceCard({ nomor, mekanik }) {
         <Text bg={"blackAlpha.200"} w={"100%"} p={2} fontWeight={700}>
           Payment Method
         </Text>
-        <Text px={2}>Cash</Text>
+        <Text px={2}>{invoiceDetail.payment}</Text>
       </VStack>
       <VStack alignItems={"flex-start"}>
         <Flex
@@ -77,18 +80,7 @@ export default function InvoiceCard({ nomor, mekanik }) {
           <Text>Item</Text>
           <Text>Harga</Text>
         </Flex>
-        <Flex p={2} justifyContent={"space-between"} w={"100%"}>
-          <Text>rek stir service(grnsi 1thn)</Text>
-          <Text>Rp.1.300.000,-</Text>
-        </Flex>
-        <Flex p={2} justifyContent={"space-between"} w={"100%"}>
-          <Text>spooring(garansi 2 minggu)</Text>
-          <Text>Rp.150.000,-</Text>
-        </Flex>
-        <Flex p={2} justifyContent={"space-between"} w={"100%"}>
-          <Text>jasa</Text>
-          <Text>Rp.500.000,-</Text>
-        </Flex>
+        <InvoiceCardDetailItem detailItem={invoiceDetail.salesOrderDetails} />
         <Flex
           bg={"blackAlpha.200"}
           p={2}
@@ -97,7 +89,7 @@ export default function InvoiceCard({ nomor, mekanik }) {
           w={"100%"}
         >
           <Text>Diskon</Text>
-          <Text>Rp.10.000,-</Text>
+          <Text>{formatMoney(invoiceDetail.discount)}</Text>
         </Flex>
         <Flex
           p={2}
@@ -106,7 +98,7 @@ export default function InvoiceCard({ nomor, mekanik }) {
           w={"100%"}
         >
           <Text>Total</Text>
-          <Text>Rp.1.940.000,-</Text>
+          <Text>{formatMoney(invoiceDetail.totalPrice)}</Text>
         </Flex>
         <Flex
           mt={"80px!important"}

@@ -2,7 +2,7 @@ import axios from "axios";
 import qs from "qs";
 // import {BASE_URL, API_TOKEN} from "@env"
 
-const salesOrderQuery = async (req, res) => {
+const salesOrdersQuery = async (req, res) => {
   const API_SALESORDER = `${process.env.NEXT_PUBLIC_API_ADDRESS}/salesorder`;
   switch (req.method) {
     case "POST":
@@ -71,4 +71,4 @@ const salesOrderQuery = async (req, res) => {
   }
 };
 
-export default salesOrderQuery;
+export default salesOrdersQuery;
