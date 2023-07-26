@@ -19,6 +19,8 @@ import { monthNames } from "@/constant/MonthName";
 import { FcFeedIn, FcInTransit, FcRules } from "react-icons/fc";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRoleContext } from "@/context/RoleContext";
+import { formatMoney } from "@/helper/FormatMoney";
+import salesOrderDayProfitQuery from "../api/salesorderdayprofit-query";
 
 export default function AdminTest() {
   const { user } = useAuthContext();
@@ -30,6 +32,7 @@ export default function AdminTest() {
   }, [user, router]);
 
   const [dateInput, setDateInput] = useState({ day: "", month: "", year: "" });
+  const [dayProfit, setDayProfit] = useState(0);
 
   const sidebarWidthHandler = (value) => {
     console.log(value);
@@ -50,10 +53,30 @@ export default function AdminTest() {
   const dateInputHandler = (e) => {
     const date = new Date(e.target.value);
     changeDateFormat(date);
+    profitDayHandler(e.target.value);
+  };
+
+  const profitDayHandler = async (date) => {
+    const salesOrderDayProfileData = await salesOrderDayProfitQuery({
+      method: "GET",
+      params: {
+        date,
+      },
+    });
+    setDayProfit(salesOrderDayProfileData.data.totalProfit);
   };
 
   useEffect(() => {
     const today = new Date();
+
+    function convertDate(today) {
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+      return formattedDate;
+    }
+    profitDayHandler(convertDate(today));
     changeDateFormat(today);
   }, []);
 
@@ -95,17 +118,7 @@ export default function AdminTest() {
                 p="6"
               >
                 <Heading size="md">Total Pemasukan</Heading>
-                <Text fontSize="3xl">Rp. 12.300.000</Text>
-              </Box>
-              <Box
-                w="100%"
-                borderRadius="lg"
-                overflow="hidden"
-                bg={"teal.100"}
-                p="6"
-              >
-                <Heading size="md">Total Modal</Heading>
-                <Text fontSize="3xl">Rp. 600.000</Text>
+                <Text fontSize="3xl">{formatMoney(dayProfit)}</Text>
               </Box>
             </HStack>
           </CardBody>

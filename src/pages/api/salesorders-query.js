@@ -42,32 +42,6 @@ const salesOrdersQuery = async (req, res) => {
           };
         }
       }
-    // case "PUT":
-    //   try {
-    //     const result = await axios.put(
-    //       `${API_STOCKS}/${req.params}`,
-    //       qs.stringify(req.body),
-    //       req.headers
-    //     );
-    //     return result;
-    //   } catch (e) {
-    //     if (axios.isAxiosError(e)) {
-    //       return {
-    //         messages: e.message,
-    //       };
-    //     }
-    //   }
-    // case "DELETE":
-    //   try {
-    //     const result = await axios.delete(`${API_STOCKS}/${req.params}`);
-    //     return result;
-    //   } catch (e) {
-    //     if (axios.isAxiosError(e)) {
-    //       return {
-    //         messages: e.message,
-    //       };
-    //     }
-    //   }
   }
 };
 

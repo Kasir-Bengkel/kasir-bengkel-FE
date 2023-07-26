@@ -11,5 +11,6 @@ export const FormatDateDB = (dateString) => {
     offset < 0 ? "" : "+"
   }${offset}:00`;
 
+  // example return value >> 25/07/2023 07:00:00 +7:00
   return formattedDate;
 };
