@@ -13,8 +13,8 @@ import { IoIosTrendingUp, IoIosTrendingDown, IoIosCash } from "react-icons/io";
 
 export default function GrandReport() {
   return (
-    <Flex mt={2} justifyContent={"space-between"}>
-      <Card p={4} h={"120px"} justifyContent={"center"}>
+    <>
+      <Card py={8} px={4} justifyContent={"center"}>
         <HStack spacing={4}>
           <Center w={12} h={12} borderRadius={"full"} bg={"green.300"}>
             <Icon as={IoIosTrendingUp} color={"white"} w={6} h={6} />
@@ -25,7 +25,7 @@ export default function GrandReport() {
           </VStack>
         </HStack>
       </Card>
-      <Card p={4} h={"120px"} justifyContent={"center"}>
+      <Card py={8} px={4} justifyContent={"center"}>
         <HStack spacing={4}>
           <Center w={12} h={12} borderRadius={"full"} bg={"red.300"}>
             <Icon as={IoIosTrendingDown} color={"white"} w={6} h={6} />
@@ -45,23 +45,11 @@ export default function GrandReport() {
                 </Heading>
                 <Heading size={"sm"}>Rp. 250.000.000</Heading>
               </VStack>
-              <VStack alignItems={"flex-start"} spacing={0}>
-                <Heading size={"sm"} color={"gray.600"}>
-                  Part/Jasa
-                </Heading>
-                <Heading size={"sm"}>Rp. 250.000.000</Heading>
-              </VStack>
-              <VStack alignItems={"flex-start"} spacing={0}>
-                <Heading size={"sm"} color={"gray.600"}>
-                  Diskon
-                </Heading>
-                <Heading size={"sm"}>Rp. 250.000.000</Heading>
-              </VStack>
             </HStack>
           </VStack>
         </HStack>
       </Card>
-      <Card p={4} h={"120px"} justifyContent={"center"}>
+      <Card py={8} px={4} justifyContent={"center"}>
         <HStack spacing={4}>
           <Center w={12} h={12} borderRadius={"full"} bg={"blue.300"}>
             <Icon as={IoIosCash} color={"white"} w={6} h={6} />
@@ -72,6 +60,6 @@ export default function GrandReport() {
           </VStack>
         </HStack>
       </Card>
-    </Flex>
+    </>
   );
 }

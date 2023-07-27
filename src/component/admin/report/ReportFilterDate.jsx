@@ -1,16 +1,16 @@
 import { Card, HStack, Input, FormControl, FormLabel } from "@chakra-ui/react";
 export default function ReportFilterDate() {
   return (
-    <Card mt={2} px={4} py={8}>
+    <Card w={"30%"} mt={2} px={4} py={8}>
       <HStack spacing={6}>
         <FormControl>
-          <FormLabel>Dari Tanggal</FormLabel>
+          <FormLabel>Tanggal</FormLabel>
           <Input type={"date"} />
         </FormControl>
-        <FormControl>
+        {/* <FormControl>
           <FormLabel>Sampai Tanggal</FormLabel>
           <Input type={"date"} />
-        </FormControl>
+        </FormControl> */}
       </HStack>
     </Card>
   );

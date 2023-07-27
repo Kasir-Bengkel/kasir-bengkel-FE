@@ -104,7 +104,7 @@ export default function AdminTest() {
                 w="100%"
                 borderRadius="lg"
                 overflow="hidden"
-                bg={"red.100"}
+                bg={"orange.100"}
                 p="6"
               >
                 <Heading size="md">Total Order</Heading>
@@ -114,11 +114,21 @@ export default function AdminTest() {
                 w="100%"
                 borderRadius="lg"
                 overflow="hidden"
-                bg={"cyan.100"}
+                bg={"green.100"}
                 p="6"
               >
                 <Heading size="md">Total Pemasukan</Heading>
                 <Text fontSize="3xl">{formatMoney(dayProfit)}</Text>
+              </Box>
+              <Box
+                w="100%"
+                borderRadius="lg"
+                overflow="hidden"
+                bg={"red.100"}
+                p="6"
+              >
+                <Heading size="md">Total Pengeluaran</Heading>
+                <Text fontSize="3xl">{formatMoney(12000)}</Text>
               </Box>
             </HStack>
           </CardBody>
