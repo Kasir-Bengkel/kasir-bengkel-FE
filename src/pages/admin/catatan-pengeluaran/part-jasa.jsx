@@ -10,15 +10,15 @@ import {
   Tr,
   Th,
   Tbody,
-  Td,
-  Text,
 } from "@chakra-ui/react";
 
 import { useState, useEffect } from "react";
-import { DUMMY_PARTJASA } from "@/constant/DummyData";
 import TablePartJasa from "@/component/admin/part-jasa/TablePartJasa";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
+import stocksQuery from "@/pages/api/stocks-query";
+import salesOrdersQuery from "@/pages/api/salesorders-query";
+import Loading from "@/component/Loading";
 
 export default function PartJasa() {
   const { user } = useAuthContext();
@@ -28,11 +28,58 @@ export default function PartJasa() {
     if (user == null) router.push("/login");
   }, [user, router]);
 
-  const [partJasa, setPartJasa] = useState(DUMMY_PARTJASA);
-  const [searchName, setSearchName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [partJasaObj, setPartJasaObj] = useState([]);
 
-  const filteredItems = partJasa.filter((item) =>
-    item.nama.toLowerCase().includes(searchName.toLowerCase())
+  useEffect(() => {
+    async function getInvoiceNumberHandler(items) {
+      //take id of the filteredTypeStocks
+      const itemsId = items.map((item) => {
+        return item.id;
+      });
+
+      //get invoice number
+      const salesOrdersData = await salesOrdersQuery({
+        method: "GET",
+      });
+
+      for (let i = 0; i < itemsId.length; i++) {
+        for (const data of salesOrdersData.data.items) {
+          const detail = data.salesOrderDetails.find(
+            (item) => item.id === itemsId[i]
+          );
+          if (detail) {
+            items[i].invoiceNumber = data.invoiceNumber;
+          }
+        }
+      }
+      setPartJasaObj(items);
+      setLoading(false);
+    }
+
+    async function getStocksHandler() {
+      setLoading(true);
+      const stocksData = await stocksQuery({
+        method: "GET",
+      });
+      if (stocksData.data !== undefined) {
+        const { items } = stocksData.data;
+        const filterTypeItems = items.filter(
+          (item) => item.types === "SERVICE" || item.types === "PART"
+        );
+        getInvoiceNumberHandler(filterTypeItems);
+      }
+    }
+    getStocksHandler();
+  }, []);
+
+  const [searchName, setSearchName] = useState("");
+  const [searchInvoice, setSearchInvoice] = useState("");
+
+  const filteredItems = partJasaObj.filter(
+    (item) =>
+      item.stockName.toLowerCase().includes(searchName.toLowerCase()) &&
+      item.invoiceNumber.toLowerCase().includes(searchInvoice.toLowerCase())
   );
 
   return (
@@ -42,36 +89,46 @@ export default function PartJasa() {
       <Card mt={"12px"} px={4} py={8}>
         <HStack spacing={6}>
           <Input
+            placeholder="No invoice"
+            onChange={(e) => setSearchInvoice(e.target.value)}
+          />
+          <Input
             placeholder="Nama Part/Jasa"
             onChange={(e) => setSearchName(e.target.value)}
           />
         </HStack>
 
-        <TableContainer mt={"12px"}>
-          <Table variant="striped" colorScheme={"blackAlpha"}>
-            <Thead>
-              <Tr>
-                <Th w={"13%"}>No. Invoice</Th>
-                <Th w={"30%"}>Nama Part/Jasa</Th>
-                <Th>Modal</Th>
-                <Th>Harga Jual</Th>
-                <Th>Selisih Harga</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {filteredItems.map((item) => (
-                <TablePartJasa
-                  key={item.id}
-                  id={item.id}
-                  invoice={item.invoice}
-                  jual={item.jual}
-                  modal={item.modal}
-                  nama={item.nama}
-                />
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
+        {loading ? (
+          <Loading />
+        ) : (
+          <TableContainer mt={"12px"}>
+            <Table variant="striped" colorScheme={"blackAlpha"}>
+              <Thead>
+                <Tr>
+                  <Th w={"13%"}>No. Invoice</Th>
+                  <Th>Date</Th>
+                  <Th w={"30%"}>Nama Part/Jasa</Th>
+                  <Th>Harga Modal</Th>
+                  <Th>Harga Jual</Th>
+                  <Th>Profit</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {filteredItems.map((item) => (
+                  <TablePartJasa
+                    key={item.id}
+                    id={item.id}
+                    invoice={item.invoiceNumber}
+                    jual={item.sellingPrice}
+                    modal={item.equityPrice}
+                    nama={item.stockName}
+                    date={item.date}
+                  />
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
+        )}
       </Card>
     </SidebarContainer>
   );
