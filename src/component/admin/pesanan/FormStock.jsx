@@ -78,7 +78,7 @@ export default function FormStock({
             >
               {stocks.map((stock) => (
                 <option key={stock.id} value={stock.id}>
-                  {stock.stockName} | qty: {stock.quantity}{" "}
+                  {stock.stockName} | qty: {stock.currentQuantity}{" "}
                 </option>
               ))}
             </Select>

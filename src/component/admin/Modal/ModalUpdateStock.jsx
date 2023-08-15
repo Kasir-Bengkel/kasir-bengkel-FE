@@ -17,7 +17,6 @@ import { useState } from "react";
 
 export default function ModalUpdateStock({
   id,
-  qty,
   namaStock,
   hargaModal,
   hargaJual,
@@ -32,7 +31,6 @@ export default function ModalUpdateStock({
     namaStock,
     hargaModal,
     hargaJual,
-    qty,
     date,
   });
 
@@ -50,7 +48,7 @@ export default function ModalUpdateStock({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Update Pengeluaran Harian</ModalHeader>
+        <ModalHeader>Update Stock</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <FormControl>
@@ -86,16 +84,6 @@ export default function ModalUpdateStock({
                 onChange={changeInputHandler}
               />
             </InputGroup>
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Jumlah Stock</FormLabel>
-            <Input
-              name="qty"
-              type="number"
-              value={updatedData.qty}
-              onChange={changeInputHandler}
-            />
           </FormControl>
         </ModalBody>
 

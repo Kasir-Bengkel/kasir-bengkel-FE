@@ -88,6 +88,8 @@ export default function StockBarang() {
     getStocksHandler();
   }, []);
 
+  console.log(stock);
+
   useEffect(() => {
     if (stock !== undefined) {
       const newFilteredItems = stock.filter((stocks) =>
@@ -230,6 +232,7 @@ export default function StockBarang() {
                       name={"harga_modal"}
                       value={newStockItem.harga_modal}
                       placeholder="harga modal"
+                      type={"number"}
                       onChange={changeInputHandler}
                     />
                     <Input
@@ -237,6 +240,7 @@ export default function StockBarang() {
                       name={"harga_jual"}
                       value={newStockItem.harga_jual}
                       placeholder="harga jual"
+                      type={"number"}
                       onChange={changeInputHandler}
                     />
                     <Input
@@ -244,6 +248,7 @@ export default function StockBarang() {
                       name={"qty"}
                       value={newStockItem.qty}
                       placeholder="jumlah stock"
+                      type={"number"}
                       onChange={changeInputHandler}
                     />
                     <Button
@@ -272,7 +277,7 @@ export default function StockBarang() {
                 <CardStock
                   key={item.id}
                   id={item.id}
-                  qty={item.quantity}
+                  curQty={item.currentQuantity}
                   namaStock={item.stockName}
                   hargaModal={item.equityPrice}
                   hargaJual={item.sellingPrice}

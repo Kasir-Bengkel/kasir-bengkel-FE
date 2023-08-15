@@ -17,7 +17,7 @@ import AlertDelete from "../alert/AlertDelete";
 
 export default function CardStock({
   id,
-  qty,
+  curQty,
   namaStock,
   hargaModal,
   hargaJual,
@@ -58,7 +58,7 @@ export default function CardStock({
                 borderRadius={"full"}
               >
                 <Text fontSize={"2xl"} color={"white"}>
-                  {qty}
+                  {curQty}
                 </Text>
               </Center>
               <Text>Jumlah Stock</Text>
@@ -89,7 +89,6 @@ export default function CardStock({
         isOpen={isUpdateOpen}
         onClose={onUpdateClose}
         id={id}
-        qty={qty}
         date={date}
         namaStock={namaStock}
         hargaModal={hargaModal}

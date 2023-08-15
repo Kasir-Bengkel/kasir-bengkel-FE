@@ -17,8 +17,6 @@ import {
   Text,
   VStack,
   Flex,
-  FormErrorMessage,
-  FormHelperText,
   useDisclosure,
 } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
@@ -29,10 +27,12 @@ import salesOrderQuery from "../api/salesorders-query";
 import stockQuery from "../api/stock-query";
 import stocksBulkQuery from "../api/stocksbulk-query";
 import { formatMoney } from "@/helper/FormatMoney";
+import { FormatDateAPI } from "@/helper/FormatDateAPI";
 import AlertSubmit from "@/component/admin/alert/AlertSubmit";
 import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
 import Loading from "@/component/Loading";
 import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
+import { FormatDateDB } from "@/helper/FormatDateDB";
 
 export default function Pesanan() {
   const [fieldsStock, setFieldsStock] = useState([]);
@@ -104,6 +104,9 @@ export default function Pesanan() {
 
   const formSalesChangeHandler = (event) => {
     const { name, value } = event.target;
+    if (name === "InvoiceDate") {
+      setFieldSalesOrder((prev) => ({ ...prev, [name]: FormatDateAPI(value) }));
+    }
     setFieldSalesOrder((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -224,9 +227,11 @@ export default function Pesanan() {
         arrPriceStock.push({
           SellingPrice: getStocksQty.data.sellingPrice,
           Quantity: fieldsStock[i].Quantity,
-          qtyStatus: fieldsStock[i].Quantity <= getStocksQty.data.quantity,
+          qtyStatus:
+            fieldsStock[i].Quantity <= getStocksQty.data.currentQuantity,
         });
       }
+
       accPriceStock = arrPriceStock.reduce((accumulator, currentValue) => {
         const { SellingPrice, Quantity } = currentValue;
         const price = parseInt(SellingPrice) * parseInt(Quantity);
@@ -262,13 +267,24 @@ export default function Pesanan() {
     let mergedStocksPartJasa;
 
     if (fieldsPartJasa.length > 0) {
+      const updatedFieldsPartJasaDate = fieldsPartJasa.map((item) => ({
+        ...item,
+        Date: FormatDateDB(fieldSalesOrder.InvoiceDate),
+      }));
+
       const newStocksBulk = await stocksBulkQuery({
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: fieldsPartJasa,
+        body: updatedFieldsPartJasaDate,
       });
+
+      if (newStocksBulk.status !== 200) {
+        setErrorMsg("Data gagal tersimpan");
+        onOpenError();
+        return;
+      }
 
       for (let i = 0; i < newStocksBulk.data.stocksId.length; i++) {
         const getStocksQty = await stockQuery({
@@ -278,10 +294,9 @@ export default function Pesanan() {
           },
           params: newStocksBulk.data.stocksId[i].id,
         });
-
         arrNewPartJasa.push({
           Id: getStocksQty.data.id,
-          Quantity: getStocksQty.data.quantity,
+          Quantity: getStocksQty.data.currentQuantity,
         });
       }
     }
@@ -358,14 +373,6 @@ export default function Pesanan() {
                   value={fieldSalesOrder.MechanicsName}
                   onChange={formSalesChangeHandler}
                 />
-                {!isError ? (
-                  <FormHelperText>
-                    Enter the email you&apos;d like to receive the newsletter
-                    on.
-                  </FormHelperText>
-                ) : (
-                  <FormErrorMessage>Email is required.</FormErrorMessage>
-                )}
               </FormControl>
               <FormControl>
                 <FormLabel>Plat Nomor(tanpa spasi)</FormLabel>
@@ -393,7 +400,7 @@ export default function Pesanan() {
                 <FormLabel>Tanggal Invoice</FormLabel>
                 <Input
                   borderColor={"gray.300"}
-                  type={"datetime-local"}
+                  type={"date"}
                   name="InvoiceDate"
                   value={fieldSalesOrder.InvoiceDate}
                   onChange={formSalesChangeHandler}

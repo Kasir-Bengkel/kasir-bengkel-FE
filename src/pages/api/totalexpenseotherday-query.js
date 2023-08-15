@@ -1,13 +1,14 @@
 import axios from "axios";
 import qs from "qs";
+// import {BASE_URL, API_TOKEN} from "@env"
 
-const salesOrderDayProfitQuery = async (req, res) => {
-  const API_SALESORDERDAYPROFIT = `${process.env.NEXT_PUBLIC_API_ADDRESS}`;
+const totalExpenseOtherDayQuery = async (req, res) => {
+  const API_EXPENSEOTHER = `${process.env.NEXT_PUBLIC_API_ADDRESS}/expenses/other`;
   switch (req.method) {
     case "GET":
       try {
         const result = await axios.get(
-          `${API_SALESORDERDAYPROFIT}/salesorder/profit?Date=${req.params.date}`
+          `${API_EXPENSEOTHER}?Date=${req.params.date}`
         );
         return result;
       } catch (e) {
@@ -20,4 +21,4 @@ const salesOrderDayProfitQuery = async (req, res) => {
   }
 };
 
-export default salesOrderDayProfitQuery;
+export default totalExpenseOtherDayQuery;
