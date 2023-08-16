@@ -9,7 +9,24 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import TableItem from "./TableItem";
-export default function ReportTableChild() {
+import { formatDate } from "@/helper/FormatDate";
+import { useState, useEffect } from "react";
+import { formatMoney } from "@/helper/FormatMoney";
+export default function ReportTableChild({ date, key, salesOrders }) {
+  const [orderCount, setOrderCount] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
+
+  useEffect(() => {
+    const filteredArr = salesOrders.filter(
+      (order) => order.invoiceDate === date
+    );
+    setOrderCount(filteredArr.length);
+  }, []);
+
+  function onGrandTotalItemHandler(v) {
+    setGrandTotal(v);
+  }
+
   return (
     <>
       <Flex
@@ -20,8 +37,8 @@ export default function ReportTableChild() {
         borderY={"1px solid"}
         borderColor={"gray.300"}
       >
-        <Text>1 Maret 2023</Text>
-        <Text>2 Order</Text>
+        <Text>{formatDate(date)}</Text>
+        <Text>{orderCount} Order</Text>
       </Flex>
       <TableContainer mt={"12px"}>
         <Table variant="simple" colorScheme={"blackAlpha"}>
@@ -36,7 +53,15 @@ export default function ReportTableChild() {
             </Tr>
           </Thead>
           <Tbody>
-            <TableItem />
+            {salesOrders
+              .filter((order) => order.invoiceDate === date)
+              .map((value, index) => (
+                <TableItem
+                  itemKey={index}
+                  salesOrder={value}
+                  onGrandTotalItem={onGrandTotalItemHandler}
+                />
+              ))}
           </Tbody>
         </Table>
       </TableContainer>
@@ -49,7 +74,7 @@ export default function ReportTableChild() {
         color={"white"}
       >
         <Text>Grand Total</Text>
-        <Text>Rp. 15.000</Text>
+        <Text>{formatMoney(grandTotal)}</Text>
       </Flex>
     </>
   );

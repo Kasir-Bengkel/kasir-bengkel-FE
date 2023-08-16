@@ -1,40 +1,19 @@
-import { Tr, Td, Text, List, ListItem } from "@chakra-ui/react";
+import { Tr, Td } from "@chakra-ui/react";
+import ItemDetail from "./ItemDetail";
 
-export default function TableItem() {
+export default function TableItem({ itemKey, salesOrder, onGrandTotalItem }) {
+  function grandTotalHandler(v) {
+    onGrandTotalItem(v);
+  }
+
   return (
-    <Tr>
-      <Td>00010323</Td>
-      <Td>B12AY</Td>
-      <Td>
-        <List spacing={4}>
-          <ListItem>Spooring</ListItem>
-          <ListItem>Spion</ListItem>
-        </List>
-      </Td>
-      <Td>
-        <List spacing={4}>
-          <ListItem>
-            <Text color={"green"}>Rp. 30.000</Text>
-          </ListItem>
-          <ListItem>-</ListItem>
-        </List>
-      </Td>
-      <Td>
-        <List spacing={4}>
-          <ListItem>
-            <Text color={"red"}>Rp. 15.000</Text>
-          </ListItem>
-          <ListItem>-</ListItem>
-        </List>
-      </Td>
-      <Td>
-        <List spacing={4}>
-          <ListItem>
-            <Text color={"green"}>Rp. 5.000</Text>
-          </ListItem>
-          <ListItem>-</ListItem>
-        </List>
-      </Td>
+    <Tr id={itemKey}>
+      <Td>{salesOrder.invoiceNumber}</Td>
+      <Td>{salesOrder.licensePlate}</Td>
+      <ItemDetail
+        orderDetail={salesOrder.salesOrderDetails}
+        onGrandTotal={grandTotalHandler}
+      />
     </Tr>
   );
 }

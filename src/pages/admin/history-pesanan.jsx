@@ -1,12 +1,11 @@
 import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
-import { Heading, HStack, Input, Select, VStack, Box } from "@chakra-ui/react";
+import { Heading, HStack, Input, VStack, Box } from "@chakra-ui/react";
 import HistoryTable from "@/component/admin/history-pesanan/HistoryTable";
 import { useState, useEffect } from "react";
-import { DUMMY_PESANAN } from "@/constant/DummyData";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
 import Loading from "@/component/Loading";
-import salesOrderQuery from "../api/salesorders-query";
+import salesOrdersQuery from "../api/salesorders-query";
 
 export default function HistoryPesanan() {
   const { user } = useAuthContext();
@@ -27,7 +26,7 @@ export default function HistoryPesanan() {
   useEffect(() => {
     async function getSalesOrdersHandler() {
       setIsLoading(true);
-      const salesOrdersData = await salesOrderQuery({
+      const salesOrdersData = await salesOrdersQuery({
         method: "GET",
       });
       setSalesOrders(salesOrdersData.data.items);

@@ -88,8 +88,6 @@ export default function StockBarang() {
     getStocksHandler();
   }, []);
 
-  console.log(stock);
-
   useEffect(() => {
     if (stock !== undefined) {
       const newFilteredItems = stock.filter((stocks) =>
