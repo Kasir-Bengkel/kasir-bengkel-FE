@@ -56,7 +56,10 @@ export default function Login() {
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((doc) => {
-      updateRole(doc.data().role);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("role", doc.data().role);
+        updateRole(doc.data().role);
+      }
     });
 
     setIsLoading(false);

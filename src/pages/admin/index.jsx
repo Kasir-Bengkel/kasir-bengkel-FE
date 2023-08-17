@@ -30,6 +30,8 @@ export default function AdminTest() {
   const { role } = useRoleContext();
   const router = useRouter();
 
+  console.log("ini role: " + role);
+
   useEffect(() => {
     if (user == null) router.push("/login");
   }, [user, router]);

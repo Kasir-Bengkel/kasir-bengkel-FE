@@ -10,8 +10,14 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { MdOutlineMoreHoriz, MdLogout, MdRecentActors } from "react-icons/md";
+import { useRoleContext } from "@/context/RoleContext";
+import { useAuthContext } from "@/context/AuthContext";
+import { useState } from "react";
 
 export const AvatarBox = ({ collapse, onLogout }) => {
+  const { user } = useAuthContext();
+  const { role } = useRoleContext();
+
   return (
     <Flex
       borderWidth={collapse ? 1 : 0}
@@ -24,7 +30,7 @@ export const AvatarBox = ({ collapse, onLogout }) => {
       gap={2}
       flexDirection={collapse ? "row" : "column-reverse"}
     >
-      <Avatar name="Kasir Bengkel Admin" bg="teal.300" />
+      <Avatar name={role} bg="teal.300" />
       {collapse && (
         <Flex
           w="full"
@@ -34,10 +40,10 @@ export const AvatarBox = ({ collapse, onLogout }) => {
           alignItems="flex-start"
         >
           <Text fontSize="sm" fontWeight="bold" pb="0" lineHeight={0}>
-            Kasir Bengkel Admin
+            {role}
           </Text>
           <Text as="small" color="gray.500" fontSize={12} lineHeight={0}>
-            kasirbengkel@email.com
+            {user === null ? "" : user.email}
           </Text>
         </Flex>
       )}

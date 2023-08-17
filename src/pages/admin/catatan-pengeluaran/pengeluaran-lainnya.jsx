@@ -30,9 +30,11 @@ import { useAuthContext } from "@/context/AuthContext";
 import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
 import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
 import Loading from "@/component/Loading";
+import { useRoleContext } from "@/context/RoleContext";
 
 export default function PengeluaranLainnya() {
   const { user } = useAuthContext();
+  const { role } = useRoleContext();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -306,6 +308,7 @@ export default function PengeluaranLainnya() {
                         date={item.date}
                         onUpdateHandler={updateHandler}
                         onDeleteHandler={deleteHandler}
+                        role={role}
                       />
                     ))}
                   </Tbody>
