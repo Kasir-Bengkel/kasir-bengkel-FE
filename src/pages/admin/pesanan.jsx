@@ -165,13 +165,13 @@ export default function Pesanan() {
   useEffect(() => {
     if (fieldsPartJasa.length > 0) {
       const hasEmptyValuePartJasa = fieldsPartJasa.some((obj) =>
-        Object.values(obj).some(
-          (value) => value === "" || value === 0 || value === ""
-        )
+        Object.values(obj).some((value) => value === "")
       );
       setInvalidPrice(hasEmptyValuePartJasa);
     }
+  }, [fieldsPartJasa]);
 
+  useEffect(() => {
     if (fieldsStock.length > 0) {
       const hasEmptyValueStock = fieldsStock.some((obj) =>
         Object.values(obj).some(
@@ -180,7 +180,7 @@ export default function Pesanan() {
       );
       setInvalidPrice(hasEmptyValueStock);
     }
-  }, [fieldsPartJasa, fieldsStock]);
+  }, [fieldsStock]);
 
   //validation
   useEffect(() => {

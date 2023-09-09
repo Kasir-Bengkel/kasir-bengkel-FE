@@ -48,6 +48,7 @@ export default function ReportTableChild({ date, key, salesOrders }) {
               <Th w={"30%"}>Plat Nomor</Th>
               <Th>Item Service</Th>
               <Th>Harga Jual</Th>
+              <Th>Kuantitas</Th>
               <Th>Harga Modal</Th>
               <Th>Selisih Harga</Th>
             </Tr>

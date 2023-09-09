@@ -38,6 +38,15 @@ export default function ItemDetail({ orderDetail, onGrandTotal }) {
         <List spacing={4}>
           {orderDetail.map((value, index) => (
             <ListItem>
+              <Text color={"green"}>{value.quantity}</Text>
+            </ListItem>
+          ))}
+        </List>
+      </Td>
+      <Td>
+        <List spacing={4}>
+          {orderDetail.map((value, index) => (
+            <ListItem>
               <Text color={"red"}>
                 {value.equityPrice === 0
                   ? "-"
