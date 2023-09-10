@@ -21,11 +21,14 @@ export default function ReportTableChild({ date, key, salesOrders }) {
       (order) => order.invoiceDate === date
     );
     setOrderCount(filteredArr.length);
+
+    const totalPrize = filteredArr.reduce((accumulator, currentItem) => {
+      return accumulator + currentItem.totalPrize;
+    }, 0);
+    setGrandTotal(totalPrize);
   }, []);
 
-  function onGrandTotalItemHandler(v) {
-    setGrandTotal(v);
-  }
+  console.log(salesOrders);
 
   return (
     <>
@@ -50,18 +53,15 @@ export default function ReportTableChild({ date, key, salesOrders }) {
               <Th>Harga Jual</Th>
               <Th>Kuantitas</Th>
               <Th>Harga Modal</Th>
-              <Th>Selisih Harga</Th>
+              <Th>Diskon</Th>
+              <Th>Selisih Harga(Profit)</Th>
             </Tr>
           </Thead>
           <Tbody>
             {salesOrders
               .filter((order) => order.invoiceDate === date)
               .map((value, index) => (
-                <TableItem
-                  itemKey={index}
-                  salesOrder={value}
-                  onGrandTotalItem={onGrandTotalItemHandler}
-                />
+                <TableItem key={index} itemKey={index} salesOrder={value} />
               ))}
           </Tbody>
         </Table>
@@ -74,7 +74,7 @@ export default function ReportTableChild({ date, key, salesOrders }) {
         px={24}
         color={"white"}
       >
-        <Text>Grand Total</Text>
+        <Text>Grand Total Pemasukan</Text>
         <Text>{formatMoney(grandTotal)}</Text>
       </Flex>
     </>

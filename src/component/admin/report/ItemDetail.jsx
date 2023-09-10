@@ -1,30 +1,20 @@
-import { Tr, Td, Text, List, ListItem } from "@chakra-ui/react";
+import { Td, Text, List, ListItem } from "@chakra-ui/react";
 import { formatMoney } from "@/helper/FormatMoney";
-import { useEffect } from "react";
 
-export default function ItemDetail({ orderDetail, onGrandTotal }) {
-  useEffect(() => {
-    const grandTotal = orderDetail.reduce((accumulator, currentValue) => {
-      const { sellingPrice, equityPrice } = currentValue;
-      const total = sellingPrice - equityPrice;
-      return accumulator + total;
-    }, 0);
-    onGrandTotal(grandTotal);
-  }, [orderDetail]);
-
+export default function ItemDetail({ orderDetail, discount }) {
   return (
     <>
       <Td>
         <List spacing={4}>
           {orderDetail.map((value, index) => (
-            <ListItem>{value.stockName}</ListItem>
+            <ListItem key={index}>{value.stockName}</ListItem>
           ))}
         </List>
       </Td>
       <Td>
         <List spacing={4}>
           {orderDetail.map((value, index) => (
-            <ListItem>
+            <ListItem key={index}>
               <Text color={"green"}>
                 {value.sellingPrice === 0
                   ? "-"
@@ -37,7 +27,7 @@ export default function ItemDetail({ orderDetail, onGrandTotal }) {
       <Td>
         <List spacing={4}>
           {orderDetail.map((value, index) => (
-            <ListItem>
+            <ListItem key={index}>
               <Text color={"green"}>{value.quantity}</Text>
             </ListItem>
           ))}
@@ -46,11 +36,9 @@ export default function ItemDetail({ orderDetail, onGrandTotal }) {
       <Td>
         <List spacing={4}>
           {orderDetail.map((value, index) => (
-            <ListItem>
+            <ListItem key={index}>
               <Text color={"red"}>
-                {value.equityPrice === 0
-                  ? "-"
-                  : formatMoney(value.sellingPrice)}
+                {value.equityPrice === 0 ? "-" : formatMoney(value.equityPrice)}
               </Text>
             </ListItem>
           ))}
@@ -58,8 +46,15 @@ export default function ItemDetail({ orderDetail, onGrandTotal }) {
       </Td>
       <Td>
         <List spacing={4}>
+          <ListItem>
+            <Text color={"red"}>{discount}</Text>
+          </ListItem>
+        </List>
+      </Td>
+      <Td>
+        <List spacing={4}>
           {orderDetail.map((value, index) => (
-            <ListItem>
+            <ListItem key={index}>
               <Text color={"green"}>
                 {formatMoney(value.sellingPrice - value.equityPrice)}
               </Text>

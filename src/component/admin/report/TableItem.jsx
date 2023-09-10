@@ -1,18 +1,15 @@
 import { Tr, Td } from "@chakra-ui/react";
 import ItemDetail from "./ItemDetail";
 
-export default function TableItem({ itemKey, salesOrder, onGrandTotalItem }) {
-  function grandTotalHandler(v) {
-    onGrandTotalItem(v);
-  }
-
+export default function TableItem({ key, itemKey, salesOrder }) {
   return (
-    <Tr id={itemKey}>
+    <Tr id={key}>
       <Td>{salesOrder.invoiceNumber}</Td>
       <Td>{salesOrder.licensePlate}</Td>
       <ItemDetail
+        key={itemKey}
         orderDetail={salesOrder.salesOrderDetails}
-        onGrandTotal={grandTotalHandler}
+        discount={salesOrder.discount}
       />
     </Tr>
   );

@@ -20,7 +20,7 @@ export default function Notifikasi() {
             404
           </Text>
           <Text fontSize="xl" mt={4}>
-            Oops! The page you're looking for doesn't exist.
+            Oops! The page you&apos;re looking for doesn&apos;t exist.
           </Text>
           <Button
             colorScheme="blue"

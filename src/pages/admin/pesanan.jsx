@@ -207,6 +207,7 @@ export default function Pesanan() {
     let arrPriceStock = [];
     let accPricePartJasa = 0;
     let accPriceStock = 0;
+    let tempTotalDiscount = isNaN(totalDiscount) ? 0 : totalDiscount;
 
     if (fieldsPartJasa.length > 0) {
       accPricePartJasa = fieldsPartJasa.reduce((accumulator, currentValue) => {
@@ -249,13 +250,14 @@ export default function Pesanan() {
       return;
     } else {
       if (accPriceStock === 0) {
-        setTotalPrice(accPricePartJasa - totalDiscount);
+        setTotalPrice(accPricePartJasa - tempTotalDiscount);
       } else if (accPricePartJasa === 0) {
-        setTotalPrice(accPriceStock - totalDiscount);
+        setTotalPrice(accPriceStock - tempTotalDiscount);
       } else if (accPricePartJasa !== 0 && accPriceStock !== 0) {
-        setTotalPrice(accPricePartJasa + accPriceStock - totalDiscount);
+        setTotalPrice(accPricePartJasa + accPriceStock - tempTotalDiscount);
       }
     }
+    setTotalDiscount(tempTotalDiscount);
     setIsFieldChange(false);
   };
 

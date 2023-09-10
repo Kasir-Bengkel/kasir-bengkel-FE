@@ -23,13 +23,14 @@ import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
 import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
 import Loading from "@/component/Loading";
 import { useRoleContext } from "@/context/RoleContext";
+import AlertErrorSubmitStock from "@/component/admin/alert/AlertErrorSubmitStock";
 
 export default function StockBarang() {
   const { user } = useAuthContext();
   const { role } = useRoleContext();
   const router = useRouter();
   const [successMsg, setSuccessMsg] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -122,6 +123,7 @@ export default function StockBarang() {
       },
     });
     setIsLoading(false);
+    console.log(newStocksData);
     if (newStocksData.status === 200) {
       setNewStockItem({
         id: "",
@@ -132,7 +134,19 @@ export default function StockBarang() {
       });
       setSuccessMsg("Data berhasil tersimpan!");
       onOpenSubmitSuccess();
-    } else {
+    }
+    // if (newStocksData.status === 400) {
+    //   console.log("masuk");
+    //   let errorArr = [];
+    //   for (let i = 0; i < newStocksData.errors.length; i++) {
+    //     errorArr.push(
+    //       newStocksData.errors[i][Object.keys(newStocksData.errors[i])][0]
+    //     );
+    //   }
+    //   console.log(errorArr.join("&"));
+    // }
+    else {
+      console.log("masuk kesini");
       setErrorMsg("Data gagal tersimpan");
       onOpenSubmitError();
     }
@@ -156,12 +170,28 @@ export default function StockBarang() {
         Types: 1,
       },
     });
+
     setIsLoading(false);
+    console.log("aselole");
+    console.log(updateStocksData);
     if (updateStocksData.status === 204) {
       setSuccessMsg("Data berhasil diperbarui!");
       onOpenSubmitSuccess();
+    }
+    if (updateStocksData.status === 400) {
+      console.log("masuk sini");
+      let errorArr = [];
+      console.log(Object.keys(updateStocksData.errors).length);
+
+      for (let i = 0; i < Object.keys(updateStocksData.errors).length; i++) {
+        let values =
+          updateStocksData.errors[Object.keys(updateStocksData.errors)[i]];
+        errorArr.push(...values);
+      }
+      setErrorMsg(errorArr);
+      onOpenSubmitError();
     } else {
-      setErrorMsg("Data gagal diperbarui");
+      setErrorMsg(["Data gagal diperbarui"]);
       onOpenSubmitError();
     }
   };
@@ -181,7 +211,6 @@ export default function StockBarang() {
       onOpenSubmitError();
     }
   };
-
   return (
     <>
       {isLoading && <Loading />}
@@ -192,13 +221,12 @@ export default function StockBarang() {
       >
         {successMsg}
       </AlertSuccessSubmit>
-      <AlertErrorSubmit
+      <AlertErrorSubmitStock
         isOpen={isOpenSubmitError}
         onOpen={onOpenSubmitError}
         onCloseHandler={onCloseSubmitError}
-      >
-        {errorMsg}
-      </AlertErrorSubmit>
+        errorMsg={errorMsg}
+      />
       <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
         <Box>
           <Heading>Stock Barang</Heading>
