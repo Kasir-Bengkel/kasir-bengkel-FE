@@ -154,6 +154,7 @@ export default function StockBarang() {
 
   const updateHandler = async (updatedData) => {
     setIsLoading(true);
+    console.log(updatedData);
     const updateStocksData = await stocksQuery({
       method: "PUT",
       params: updatedData.id,
@@ -162,7 +163,7 @@ export default function StockBarang() {
       },
       body: {
         Id: updatedData.id,
-        Quantity: updatedData.qty,
+        Quantity: updatedData.quantity,
         ItemName: updatedData.namaStock,
         SellingPrice: updatedData.hargaJual,
         EquityPrice: updatedData.hargaModal,
@@ -172,8 +173,7 @@ export default function StockBarang() {
     });
 
     setIsLoading(false);
-    console.log("aselole");
-    console.log(updateStocksData);
+
     if (updateStocksData.status === 204) {
       setSuccessMsg("Data berhasil diperbarui!");
       onOpenSubmitSuccess();
@@ -189,9 +189,6 @@ export default function StockBarang() {
         errorArr.push(...values);
       }
       setErrorMsg(errorArr);
-      onOpenSubmitError();
-    } else {
-      setErrorMsg(["Data gagal diperbarui"]);
       onOpenSubmitError();
     }
   };
