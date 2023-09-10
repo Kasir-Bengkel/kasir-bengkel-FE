@@ -97,6 +97,7 @@ export default function CardStock({
         namaStock={namaStock}
         hargaModal={hargaModal}
         hargaJual={hargaJual}
+        quantity={curQty}
         onCloseHandler={onUpdateClose}
         onSaveHandler={onUpdateHandler}
       />

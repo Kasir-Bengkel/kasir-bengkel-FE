@@ -20,6 +20,7 @@ export default function ModalUpdateStock({
   namaStock,
   hargaModal,
   hargaJual,
+  quantity,
   date,
   isOpen,
   onClose,
@@ -32,6 +33,7 @@ export default function ModalUpdateStock({
     hargaModal,
     hargaJual,
     date,
+    quantity,
   });
 
   const changeInputHandler = (e) => {
