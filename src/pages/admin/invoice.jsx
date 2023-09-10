@@ -1,15 +1,54 @@
-import SidebarContainer from "@/component/admin/navigation/SidebarContainer";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { Heading, Card, Center, Flex, Button } from "@chakra-ui/react";
+import {
+  Heading,
+  Card,
+  Center,
+  Flex,
+  Button,
+  Box,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import InvoiceCard from "@/component/admin/invoice/InvoiceCard";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSalesOrderContext } from "@/context/SalesOrderContext";
 
 export default function Invoice() {
   const { user } = useAuthContext();
   const router = useRouter();
+
+  const { salesOrder } = useSalesOrderContext();
+
+  // const [totalPayment, setTotalPayment] = useState(0);
+
+  // useEffect(() => {
+  //   const accSelling = salesOrder.salesOrderDetails.reduce(
+  //     (accumulator, currentValue) => {
+  //       const { sellingPrice, quantity } = currentValue;
+  //       const selling = sellingPrice * quantity;
+  //       return accumulator + selling;
+  //     },
+  //     0
+  //   );
+  //   setTotalPayment(accSelling);
+  // }, [salesOrder]);
+
+  const [invoiceDetail, setInvoiceDetail] = useState({
+    customerName: salesOrder.customerName,
+    discount: salesOrder.discount,
+    id: salesOrder.id,
+    invoiceDate: salesOrder.invoiceDate,
+    invoiceNumber: salesOrder.invoiceNumber,
+    licensePlate: salesOrder.licensePlate,
+    mechanicsName: salesOrder.mechanicsName,
+    payment: salesOrder.payment,
+    phoneNumber: salesOrder.phoneNumber,
+    salesOrderDetails: salesOrder.salesOrderDetails,
+    totalPrice: salesOrder.totalPrice,
+    vehicleName: salesOrder.vehicleName,
+  });
 
   useEffect(() => {
     if (user == null) router.push("/login");
@@ -38,8 +77,8 @@ export default function Invoice() {
   };
 
   return (
-    <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
-      <Flex justifyContent={"space-around"}>
+    <Box bg={useColorModeValue("gray.100", "gray.900")}>
+      <Flex justifyContent={"space-around"} gap={56} pt={4}>
         <Heading>Invoice</Heading>
         <Button colorScheme="blue" onClick={exportToPDF}>
           Download PDF
@@ -47,9 +86,9 @@ export default function Invoice() {
       </Flex>
       <Center mt={4} pb={4}>
         <Card p={4} w={"1000px"} id={"myDivToExport"}>
-          <InvoiceCard nomor={"00010323"} mekanik={"wahyu"} />
+          <InvoiceCard invoiceDetail={invoiceDetail} />
         </Card>
       </Center>
-    </SidebarContainer>
+    </Box>
   );
 }

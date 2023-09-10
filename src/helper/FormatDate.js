@@ -6,5 +6,6 @@ export const formatDate = (dateValue) => {
   const monthIndex = date.getMonth();
   const year = date.getFullYear();
   const outputDate = `${day} ${monthNames[monthIndex]} ${year}`;
+  // example return value >> 25 July 2023
   return outputDate;
 };

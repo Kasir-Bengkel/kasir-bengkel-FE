@@ -40,11 +40,7 @@ const stocksQuery = async (req, res) => {
         );
         return result;
       } catch (e) {
-        if (axios.isAxiosError(e)) {
-          return {
-            messages: e.message,
-          };
-        }
+        return e.response.data;
       }
     case "DELETE":
       try {

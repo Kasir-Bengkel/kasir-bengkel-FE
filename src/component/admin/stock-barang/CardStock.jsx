@@ -14,16 +14,18 @@ import {
 import { formatMoney } from "@/helper/FormatMoney";
 import ModalUpdateStock from "../Modal/ModalUpdateStock";
 import AlertDelete from "../alert/AlertDelete";
+import { useRoleContext } from "@/context/RoleContext";
 
 export default function CardStock({
   id,
-  qty,
+  curQty,
   namaStock,
   hargaModal,
   hargaJual,
   onUpdateHandler,
   onDeleteHandler,
   date,
+  role,
 }) {
   const {
     isOpen: isUpdateOpen,
@@ -58,7 +60,7 @@ export default function CardStock({
                 borderRadius={"full"}
               >
                 <Text fontSize={"2xl"} color={"white"}>
-                  {qty}
+                  {curQty}
                 </Text>
               </Center>
               <Text>Jumlah Stock</Text>
@@ -75,21 +77,22 @@ export default function CardStock({
               </HStack>
             </VStack>
           </HStack>
-          <ButtonGroup spacing={8} size={"lg"}>
-            <Button colorScheme={"blue"} onClick={onUpdateOpen}>
-              Update
-            </Button>
-            <Button colorScheme={"red"} onClick={onDeleteOpen}>
-              Hapus
-            </Button>
-          </ButtonGroup>
+          {role === "admin" && (
+            <ButtonGroup spacing={8} size={"lg"}>
+              <Button colorScheme={"blue"} onClick={onUpdateOpen}>
+                Update
+              </Button>
+              <Button colorScheme={"red"} onClick={onDeleteOpen}>
+                Hapus
+              </Button>
+            </ButtonGroup>
+          )}
         </Flex>
       </Card>
       <ModalUpdateStock
         isOpen={isUpdateOpen}
         onClose={onUpdateClose}
         id={id}
-        qty={qty}
         date={date}
         namaStock={namaStock}
         hargaModal={hargaModal}

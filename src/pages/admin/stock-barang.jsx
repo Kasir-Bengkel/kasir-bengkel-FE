@@ -22,12 +22,15 @@ import { useAuthContext } from "@/context/AuthContext";
 import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
 import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
 import Loading from "@/component/Loading";
+import { useRoleContext } from "@/context/RoleContext";
+import AlertErrorSubmitStock from "@/component/admin/alert/AlertErrorSubmitStock";
 
 export default function StockBarang() {
   const { user } = useAuthContext();
+  const { role } = useRoleContext();
   const router = useRouter();
   const [successMsg, setSuccessMsg] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -42,6 +45,7 @@ export default function StockBarang() {
   } = useDisclosure();
 
   useEffect(() => {
+    // console.log(user);
     if (user == null) router.push("/login");
   }, [user, router]);
 
@@ -119,6 +123,7 @@ export default function StockBarang() {
       },
     });
     setIsLoading(false);
+    console.log(newStocksData);
     if (newStocksData.status === 200) {
       setNewStockItem({
         id: "",
@@ -129,7 +134,19 @@ export default function StockBarang() {
       });
       setSuccessMsg("Data berhasil tersimpan!");
       onOpenSubmitSuccess();
-    } else {
+    }
+    // if (newStocksData.status === 400) {
+    //   console.log("masuk");
+    //   let errorArr = [];
+    //   for (let i = 0; i < newStocksData.errors.length; i++) {
+    //     errorArr.push(
+    //       newStocksData.errors[i][Object.keys(newStocksData.errors[i])][0]
+    //     );
+    //   }
+    //   console.log(errorArr.join("&"));
+    // }
+    else {
+      console.log("masuk kesini");
       setErrorMsg("Data gagal tersimpan");
       onOpenSubmitError();
     }
@@ -153,12 +170,28 @@ export default function StockBarang() {
         Types: 1,
       },
     });
+
     setIsLoading(false);
+    console.log("aselole");
+    console.log(updateStocksData);
     if (updateStocksData.status === 204) {
       setSuccessMsg("Data berhasil diperbarui!");
       onOpenSubmitSuccess();
+    }
+    if (updateStocksData.status === 400) {
+      console.log("masuk sini");
+      let errorArr = [];
+      console.log(Object.keys(updateStocksData.errors).length);
+
+      for (let i = 0; i < Object.keys(updateStocksData.errors).length; i++) {
+        let values =
+          updateStocksData.errors[Object.keys(updateStocksData.errors)[i]];
+        errorArr.push(...values);
+      }
+      setErrorMsg(errorArr);
+      onOpenSubmitError();
     } else {
-      setErrorMsg("Data gagal diperbarui");
+      setErrorMsg(["Data gagal diperbarui"]);
       onOpenSubmitError();
     }
   };
@@ -178,7 +211,6 @@ export default function StockBarang() {
       onOpenSubmitError();
     }
   };
-
   return (
     <>
       {isLoading && <Loading />}
@@ -189,13 +221,12 @@ export default function StockBarang() {
       >
         {successMsg}
       </AlertSuccessSubmit>
-      <AlertErrorSubmit
+      <AlertErrorSubmitStock
         isOpen={isOpenSubmitError}
         onOpen={onOpenSubmitError}
         onCloseHandler={onCloseSubmitError}
-      >
-        {errorMsg}
-      </AlertErrorSubmit>
+        errorMsg={errorMsg}
+      />
       <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
         <Box>
           <Heading>Stock Barang</Heading>
@@ -229,6 +260,7 @@ export default function StockBarang() {
                       name={"harga_modal"}
                       value={newStockItem.harga_modal}
                       placeholder="harga modal"
+                      type={"number"}
                       onChange={changeInputHandler}
                     />
                     <Input
@@ -236,6 +268,7 @@ export default function StockBarang() {
                       name={"harga_jual"}
                       value={newStockItem.harga_jual}
                       placeholder="harga jual"
+                      type={"number"}
                       onChange={changeInputHandler}
                     />
                     <Input
@@ -243,6 +276,7 @@ export default function StockBarang() {
                       name={"qty"}
                       value={newStockItem.qty}
                       placeholder="jumlah stock"
+                      type={"number"}
                       onChange={changeInputHandler}
                     />
                     <Button
@@ -271,13 +305,14 @@ export default function StockBarang() {
                 <CardStock
                   key={item.id}
                   id={item.id}
-                  qty={item.quantity}
+                  curQty={item.currentQuantity}
                   namaStock={item.stockName}
                   hargaModal={item.equityPrice}
                   hargaJual={item.sellingPrice}
                   date={item.date}
                   onUpdateHandler={updateHandler}
                   onDeleteHandler={deleteHandler}
+                  role={role}
                 />
               ))}
             </VStack>

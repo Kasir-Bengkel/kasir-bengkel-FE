@@ -27,12 +27,14 @@ import { useState, useEffect } from "react";
 import expensesQuery from "@/pages/api/expenses-query";
 import { useRouter } from "next/router";
 import { useAuthContext } from "@/context/AuthContext";
+import { useRoleContext } from "@/context/RoleContext";
 import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
 import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
 import Loading from "@/component/Loading";
 
 export default function PengeluaranHarian() {
   const { user } = useAuthContext();
+  const { role } = useRoleContext();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -305,6 +307,7 @@ export default function PengeluaranHarian() {
                         date={item.date}
                         onUpdateHandler={updateHandler}
                         onDeleteHandler={deleteHandler}
+                        role={role}
                       />
                     ))}
                   </Tbody>

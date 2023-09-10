@@ -15,7 +15,6 @@ export default function SidebarContainer({ children, onSidebarWidth }) {
   };
 
   const logoutClickHandler = () => {
-    console.log("Kepencet disini");
     auth.signOut();
   };
 

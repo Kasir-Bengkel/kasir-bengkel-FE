@@ -14,48 +14,101 @@ import {
   Input,
 } from "@chakra-ui/react";
 
-import { monthNames } from "@/constant/MonthName";
-
-import { FcFeedIn, FcInTransit, FcRules } from "react-icons/fc";
+import { FcFeedIn, FcInTransit, FcRules, FcExport } from "react-icons/fc";
 import { useAuthContext } from "@/context/AuthContext";
 import { useRoleContext } from "@/context/RoleContext";
+import { formatMoney } from "@/helper/FormatMoney";
+import { FormatDateAPI } from "@/helper/FormatDateAPI";
+import { formatDate } from "@/helper/FormatDate";
+import incomeDayQuery from "../api/incomeday-query";
+import countOrderQuery from "../api/countorder-query";
+import totalExpenseDailyDayQuery from "../api/totalexpensedailyday-query";
+import totalExpenseOtherDayQuery from "../api/totalexpenseotherday-query";
 
 export default function AdminTest() {
   const { user } = useAuthContext();
   const { role } = useRoleContext();
   const router = useRouter();
 
+  console.log("ini role: " + role);
+
   useEffect(() => {
     if (user == null) router.push("/login");
-    console.log("di index: " + role);
   }, [user, router]);
 
-  const [dateInput, setDateInput] = useState({ day: "", month: "", year: "" });
+  const [dateInput, setDateInput] = useState("");
+  const [dayIncome, setDayIncome] = useState(0);
+  const [dayCount, setDayCount] = useState(0);
+  const [dayExpense, setDayExpense] = useState(0);
 
   const sidebarWidthHandler = (value) => {
     console.log(value);
   };
 
-  const changeDateFormat = (date) => {
-    const updatedValue = {
-      day: date.getDate(),
-      month: monthNames[date.getMonth()],
-      year: date.getFullYear(),
-    };
-    setDateInput((oldValue) => ({
-      ...oldValue,
-      ...updatedValue,
-    }));
+  const dateInputHandler = (e) => {
+    console.log("masuk");
+    console.log(e.target.value);
+    orderDayHandler(FormatDateAPI(e.target.value));
+    incomeDayHandler(FormatDateAPI(e.target.value));
+    expenseDayHandler(FormatDateAPI(e.target.value));
+    setDateInput(formatDate(e.target.value));
   };
 
-  const dateInputHandler = (e) => {
-    const date = new Date(e.target.value);
-    changeDateFormat(date);
+  const expenseDayHandler = async (date) => {
+    const totalExpenseDailyDay = await totalExpenseDailyDayQuery({
+      method: "GET",
+      params: {
+        date,
+      },
+    });
+    if (totalExpenseDailyDay.status !== 200) {
+      return;
+    }
+    const totalExpenseOtherDay = await totalExpenseOtherDayQuery({
+      method: "GET",
+      params: {
+        date,
+      },
+    });
+    if (totalExpenseOtherDay.status !== 200) {
+      return;
+    }
+    const totalExpenseDay =
+      totalExpenseDailyDay.data.total + totalExpenseOtherDay.data.price;
+
+    setDayExpense(totalExpenseDay);
+  };
+
+  const orderDayHandler = async (date) => {
+    const countOrderData = await countOrderQuery({
+      method: "GET",
+      params: {
+        date,
+      },
+    });
+    if (countOrderData.status === 200) {
+      setDayCount(countOrderData.data.count);
+    }
+  };
+
+  const incomeDayHandler = async (date) => {
+    const incomeDayData = await incomeDayQuery({
+      method: "GET",
+      params: {
+        date,
+      },
+    });
+    if (incomeDayData.status === 200) {
+      setDayIncome(incomeDayData.data.totalIncome);
+    }
   };
 
   useEffect(() => {
-    const today = new Date();
-    changeDateFormat(today);
+    const today = new Date().toISOString().split("T")[0];
+    setDateInput(formatDate(today));
+    orderDayHandler(FormatDateAPI(today));
+    incomeDayHandler(FormatDateAPI(today));
+    expenseDayHandler(FormatDateAPI(today));
   }, []);
 
   return (
@@ -73,7 +126,7 @@ export default function AdminTest() {
               />
             </Flex>
             <Text mt={"8px"} fontSize={"2xl"}>
-              {dateInput.day} {dateInput.month} {dateInput.year}
+              {dateInput}
             </Text>
           </CardHeader>
           <CardBody>
@@ -82,31 +135,31 @@ export default function AdminTest() {
                 w="100%"
                 borderRadius="lg"
                 overflow="hidden"
-                bg={"red.100"}
+                bg={"orange.100"}
                 p="6"
               >
                 <Heading size="md">Total Order</Heading>
-                <Text fontSize="3xl">10</Text>
+                <Text fontSize="3xl">{dayCount}</Text>
               </Box>
               <Box
                 w="100%"
                 borderRadius="lg"
                 overflow="hidden"
-                bg={"cyan.100"}
+                bg={"green.100"}
                 p="6"
               >
                 <Heading size="md">Total Pemasukan</Heading>
-                <Text fontSize="3xl">Rp. 12.300.000</Text>
+                <Text fontSize="3xl">{formatMoney(dayIncome)}</Text>
               </Box>
               <Box
                 w="100%"
                 borderRadius="lg"
                 overflow="hidden"
-                bg={"teal.100"}
+                bg={"red.100"}
                 p="6"
               >
-                <Heading size="md">Total Modal</Heading>
-                <Text fontSize="3xl">Rp. 600.000</Text>
+                <Heading size="md">Total Pengeluaran</Heading>
+                <Text fontSize="3xl">{formatMoney(dayExpense)}</Text>
               </Box>
             </HStack>
           </CardBody>
@@ -143,7 +196,7 @@ export default function AdminTest() {
             }}
           >
             <CardHeader>
-              <FcFeedIn size={"24px"} />
+              <FcExport size={"24px"} />
             </CardHeader>
             <CardBody>
               <Heading size="md">Catatan Pengeluaran</Heading>

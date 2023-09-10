@@ -9,7 +9,27 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import TableItem from "./TableItem";
-export default function ReportTableChild() {
+import { formatDate } from "@/helper/FormatDate";
+import { useState, useEffect } from "react";
+import { formatMoney } from "@/helper/FormatMoney";
+export default function ReportTableChild({ date, key, salesOrders }) {
+  const [orderCount, setOrderCount] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
+
+  useEffect(() => {
+    const filteredArr = salesOrders.filter(
+      (order) => order.invoiceDate === date
+    );
+    setOrderCount(filteredArr.length);
+
+    const totalPrize = filteredArr.reduce((accumulator, currentItem) => {
+      return accumulator + currentItem.totalPrize;
+    }, 0);
+    setGrandTotal(totalPrize);
+  }, []);
+
+  console.log(salesOrders);
+
   return (
     <>
       <Flex
@@ -20,8 +40,8 @@ export default function ReportTableChild() {
         borderY={"1px solid"}
         borderColor={"gray.300"}
       >
-        <Text>1 Maret 2023</Text>
-        <Text>2 Order</Text>
+        <Text>{formatDate(date)}</Text>
+        <Text>{orderCount} Order</Text>
       </Flex>
       <TableContainer mt={"12px"}>
         <Table variant="simple" colorScheme={"blackAlpha"}>
@@ -31,12 +51,18 @@ export default function ReportTableChild() {
               <Th w={"30%"}>Plat Nomor</Th>
               <Th>Item Service</Th>
               <Th>Harga Jual</Th>
+              <Th>Kuantitas</Th>
               <Th>Harga Modal</Th>
-              <Th>Selisih Harga</Th>
+              <Th>Diskon</Th>
+              <Th>Selisih Harga(Profit)</Th>
             </Tr>
           </Thead>
           <Tbody>
-            <TableItem />
+            {salesOrders
+              .filter((order) => order.invoiceDate === date)
+              .map((value, index) => (
+                <TableItem key={index} itemKey={index} salesOrder={value} />
+              ))}
           </Tbody>
         </Table>
       </TableContainer>
@@ -48,8 +74,8 @@ export default function ReportTableChild() {
         px={24}
         color={"white"}
       >
-        <Text>Grand Total</Text>
-        <Text>Rp. 15.000</Text>
+        <Text>Grand Total Pemasukan</Text>
+        <Text>{formatMoney(grandTotal)}</Text>
       </Flex>
     </>
   );

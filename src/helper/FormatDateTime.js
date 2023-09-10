@@ -14,5 +14,6 @@ export const formatDateTime = (dateValue) => {
     .toString()
     .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 
+  // example return value >> 25 July 2023 07:00
   return outputDate;
 };

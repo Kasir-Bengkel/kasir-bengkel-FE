@@ -18,6 +18,7 @@ export default function TablePengeluaranLainnya({
   date,
   onUpdateHandler,
   onDeleteHandler,
+  role,
 }) {
   const {
     isOpen: isUpdateOpen,
@@ -46,14 +47,16 @@ export default function TablePengeluaranLainnya({
       <Td>{catatan}</Td>
       <Td>
         <Flex justifyContent={"center"}>
-          <ButtonGroup spacing={4}>
-            <Button colorScheme={"blue"} onClick={onUpdateOpen}>
-              Update
-            </Button>
-            <Button colorScheme={"red"} onClick={onDeleteOpen}>
-              Delete
-            </Button>
-          </ButtonGroup>
+          {role === "admin" && (
+            <ButtonGroup spacing={4}>
+              <Button colorScheme={"blue"} onClick={onUpdateOpen}>
+                Update
+              </Button>
+              <Button colorScheme={"red"} onClick={onDeleteOpen}>
+                Delete
+              </Button>
+            </ButtonGroup>
+          )}
         </Flex>
         <ModalUpdatePengeluaran
           isOpen={isUpdateOpen}
