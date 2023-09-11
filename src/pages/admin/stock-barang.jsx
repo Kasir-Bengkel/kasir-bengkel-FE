@@ -23,7 +23,6 @@ import AlertSuccessSubmit from "@/component/admin/alert/AlertSuccessSubmit";
 import AlertErrorSubmit from "@/component/admin/alert/AlertErrorSubmit";
 import Loading from "@/component/Loading";
 import { useRoleContext } from "@/context/RoleContext";
-import AlertErrorSubmitStock from "@/component/admin/alert/AlertErrorSubmitStock";
 
 export default function StockBarang() {
   const { user } = useAuthContext();
@@ -179,7 +178,6 @@ export default function StockBarang() {
       onOpenSubmitSuccess();
     }
     if (updateStocksData.status === 400) {
-      console.log("masuk sini");
       let errorArr = [];
       console.log(Object.keys(updateStocksData.errors).length);
 
@@ -218,12 +216,13 @@ export default function StockBarang() {
       >
         {successMsg}
       </AlertSuccessSubmit>
-      <AlertErrorSubmitStock
+      <AlertErrorSubmit
         isOpen={isOpenSubmitError}
         onOpen={onOpenSubmitError}
         onCloseHandler={onCloseSubmitError}
-        errorMsg={errorMsg}
-      />
+      >
+        {errorMsg}
+      </AlertErrorSubmit>
       <SidebarContainer onSidebarWidth={(v) => console.log(v)}>
         <Box>
           <Heading>Stock Barang</Heading>
