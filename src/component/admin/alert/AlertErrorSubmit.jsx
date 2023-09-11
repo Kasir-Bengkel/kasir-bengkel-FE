@@ -6,6 +6,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
+  Text,
 } from "@chakra-ui/react";
 
 import { useRef } from "react";
@@ -30,7 +31,15 @@ export default function AlertErrorSubmit({
             Error Message
           </AlertDialogHeader>
 
-          <AlertDialogBody>{children}</AlertDialogBody>
+          {Array.isArray(children) ? (
+            <AlertDialogBody>
+              {children.map((itemName, index) => (
+                <Text key={index}>{itemName}</Text>
+              ))}
+            </AlertDialogBody>
+          ) : (
+            <AlertDialogBody>{children}</AlertDialogBody>
+          )}
 
           <AlertDialogFooter>
             <Button

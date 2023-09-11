@@ -56,11 +56,13 @@ export default function Pesanan() {
   const [totalPrice, setTotalPrice] = useState(0);
   const [invalidPrice, setInvalidPrice] = useState(true);
   const [invalidDetail, setInvalidDetail] = useState(true);
-  const [error, isError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [isFieldChange, setIsFieldChange] = useState(true);
   const [successMsg, setSuccessMsg] = useState("");
+  const [emptyKeyPartJasa, setEmptyKeyPartJasa] = useState([]);
+  const [emptyKeyStock, setEmptyKeyStock] = useState([]);
+  const [emptyKeyDetail, setEmptyKeyDetail] = useState([]);
 
   const {
     isOpen: isOpenSubmit,
@@ -169,6 +171,18 @@ export default function Pesanan() {
       );
       setInvalidPrice(hasEmptyValuePartJasa);
     }
+
+    const keysWithEmptyValues = [];
+
+    fieldsPartJasa.forEach((item) => {
+      for (const key in item) {
+        if (item.hasOwnProperty(key) && item[key] === "") {
+          keysWithEmptyValues.push(key);
+        }
+      }
+    });
+
+    setEmptyKeyPartJasa(keysWithEmptyValues);
   }, [fieldsPartJasa]);
 
   useEffect(() => {
@@ -179,6 +193,21 @@ export default function Pesanan() {
         )
       );
       setInvalidPrice(hasEmptyValueStock);
+
+      const keysWithEmptyValues = [];
+
+      fieldsStock.forEach((item) => {
+        for (const key in item) {
+          if (
+            (item.hasOwnProperty(key) && item[key] === "") ||
+            item[key] === 0
+          ) {
+            keysWithEmptyValues.push(key);
+          }
+        }
+      });
+
+      setEmptyKeyStock(keysWithEmptyValues);
     }
   }, [fieldsStock]);
 
@@ -196,6 +225,18 @@ export default function Pesanan() {
       }
     } else {
       setInvalidDetail(true);
+      const keysWithEmptyValues = [];
+
+      for (const key in fieldSalesOrder) {
+        if (
+          fieldSalesOrder.hasOwnProperty(key) &&
+          fieldSalesOrder[key] === ""
+        ) {
+          keysWithEmptyValues.push(key);
+        }
+      }
+
+      setEmptyKeyDetail(keysWithEmptyValues);
     }
   }, [fieldSalesOrder, invalidPrice, totalPrice]);
 
@@ -204,61 +245,74 @@ export default function Pesanan() {
   }, [fieldsStock, fieldsPartJasa, totalDiscount]);
 
   const checkPrizeHandler = async () => {
-    let arrPriceStock = [];
-    let accPricePartJasa = 0;
-    let accPriceStock = 0;
-    let tempTotalDiscount = isNaN(totalDiscount) ? 0 : totalDiscount;
-
-    if (fieldsPartJasa.length > 0) {
-      accPricePartJasa = fieldsPartJasa.reduce((accumulator, currentValue) => {
-        const { SellingPrice, Quantity } = currentValue;
-        const price = parseInt(SellingPrice) * parseInt(Quantity);
-        return accumulator + price;
-      }, 0);
-    }
-    if (fieldsStock.length > 0) {
-      for (let i = 0; i < fieldsStock.length; i++) {
-        const getStocksQty = await stockQuery({
-          method: "GET",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          params: fieldsStock[i].StockId,
-        });
-        arrPriceStock.push({
-          SellingPrice: getStocksQty.data.sellingPrice,
-          Quantity: fieldsStock[i].Quantity,
-          qtyStatus:
-            fieldsStock[i].Quantity <= getStocksQty.data.currentQuantity,
-        });
-      }
-
-      accPriceStock = arrPriceStock.reduce((accumulator, currentValue) => {
-        const { SellingPrice, Quantity } = currentValue;
-        const price = parseInt(SellingPrice) * parseInt(Quantity);
-        return accumulator + price;
-      }, 0);
-    }
-
-    const hasFalseQuantityStatus = arrPriceStock.some(
-      (item) => item.qtyStatus === false
-    );
-
-    if (hasFalseQuantityStatus === true) {
-      setErrorMsg("stock tidak cukup");
+    if (invalidPrice === true) {
+      setErrorMsg(`input harus diisi ${emptyKeyPartJasa} ${emptyKeyStock}`);
+      onOpenError();
+      return;
+    } else if (invalidDetail === true) {
+      setErrorMsg(`input harus diisi ${emptyKeyDetail}`);
       onOpenError();
       return;
     } else {
-      if (accPriceStock === 0) {
-        setTotalPrice(accPricePartJasa - tempTotalDiscount);
-      } else if (accPricePartJasa === 0) {
-        setTotalPrice(accPriceStock - tempTotalDiscount);
-      } else if (accPricePartJasa !== 0 && accPriceStock !== 0) {
-        setTotalPrice(accPricePartJasa + accPriceStock - tempTotalDiscount);
+      let arrPriceStock = [];
+      let accPricePartJasa = 0;
+      let accPriceStock = 0;
+      let tempTotalDiscount = isNaN(totalDiscount) ? 0 : totalDiscount;
+
+      if (fieldsPartJasa.length > 0) {
+        accPricePartJasa = fieldsPartJasa.reduce(
+          (accumulator, currentValue) => {
+            const { SellingPrice, Quantity } = currentValue;
+            const price = parseInt(SellingPrice) * parseInt(Quantity);
+            return accumulator + price;
+          },
+          0
+        );
       }
+      if (fieldsStock.length > 0) {
+        for (let i = 0; i < fieldsStock.length; i++) {
+          const getStocksQty = await stockQuery({
+            method: "GET",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            params: fieldsStock[i].StockId,
+          });
+          arrPriceStock.push({
+            SellingPrice: getStocksQty.data.sellingPrice,
+            Quantity: fieldsStock[i].Quantity,
+            qtyStatus:
+              fieldsStock[i].Quantity <= getStocksQty.data.currentQuantity,
+          });
+        }
+
+        accPriceStock = arrPriceStock.reduce((accumulator, currentValue) => {
+          const { SellingPrice, Quantity } = currentValue;
+          const price = parseInt(SellingPrice) * parseInt(Quantity);
+          return accumulator + price;
+        }, 0);
+      }
+
+      const hasFalseQuantityStatus = arrPriceStock.some(
+        (item) => item.qtyStatus === false
+      );
+
+      if (hasFalseQuantityStatus === true) {
+        setErrorMsg("stock tidak cukup");
+        onOpenError();
+        return;
+      } else {
+        if (accPriceStock === 0) {
+          setTotalPrice(accPricePartJasa - tempTotalDiscount);
+        } else if (accPricePartJasa === 0) {
+          setTotalPrice(accPriceStock - tempTotalDiscount);
+        } else if (accPricePartJasa !== 0 && accPriceStock !== 0) {
+          setTotalPrice(accPricePartJasa + accPriceStock - tempTotalDiscount);
+        }
+      }
+      setTotalDiscount(tempTotalDiscount);
+      setIsFieldChange(false);
     }
-    setTotalDiscount(tempTotalDiscount);
-    setIsFieldChange(false);
   };
 
   const submitHandler = async () => {
@@ -283,7 +337,7 @@ export default function Pesanan() {
       });
 
       if (newStocksBulk.status !== 200) {
-        setErrorMsg("Data gagal tersimpan");
+        setErrorMsg("Data gagal tersimpan cek input stock/jasa dengan benar");
         onOpenError();
         return;
       }
@@ -547,7 +601,7 @@ export default function Pesanan() {
                     px={8}
                     colorScheme={"blue"}
                     onClick={checkPrizeHandler}
-                    isDisabled={invalidPrice}
+                    // isDisabled={invalidPrice}
                   >
                     Cek Harga
                   </Button>
